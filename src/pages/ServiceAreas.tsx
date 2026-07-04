@@ -146,6 +146,27 @@ export default function ServiceAreas() {
         </div>
       </section>
 
+      {/* ── Arizona photo band ── */}
+      <section className="relative overflow-hidden h-48 md:h-64">
+        <img
+          src="/images/arizona.jpg"
+          alt="Sonoran Desert landscape in the West Valley Arizona region — the communities Cleaning By Kandi serves"
+          className="absolute inset-0 w-full h-full object-cover"
+          width={1200}
+          height={600}
+          loading="lazy"
+          decoding="async"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/75 to-sky-900/50 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <p className="text-sky-300 font-semibold text-sm uppercase tracking-wider mb-2">Proudly Rooted in Arizona</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">
+              The West Valley,<br className="sm:hidden" /> Our Home.
+            </h2>
+          </div>
+        </div>
+      </section>
+
       {/* ── Same service everywhere ── */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

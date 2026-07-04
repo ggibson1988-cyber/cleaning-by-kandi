@@ -9,14 +9,15 @@ import FadeIn from '../components/FadeIn';
 import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
+import SparkleAccent from '../components/SparkleAccent';
 
 /* ─── Data ───────────────────────────────────────────────── */
 const services = [
-  { icon: HomeIcon,   title: 'Residential Cleaning',      description: 'Regular scheduled cleaning to keep your home spotless — kitchens, baths, living areas, and more.' },
-  { icon: Layers,     title: 'Deep Cleaning',              description: 'A thorough top-to-bottom clean, reaching every corner your regular routine misses.' },
-  { icon: Key,        title: 'Move-In / Move-Out',         description: 'Start fresh or leave a sparkling impression for the next occupants.' },
-  { icon: Building2,  title: 'Short-Term Rental',          description: 'Fast, reliable turnovers for Airbnb and VRBO hosts — guest-ready every time.' },
-  { icon: MoveRight,  title: 'Commercial Cleaning',        description: 'Professional cleaning for offices and commercial spaces, done on your schedule.' },
+  { icon: HomeIcon,   title: 'Residential Cleaning',  description: 'Regular scheduled cleaning to keep your home spotless — kitchens, baths, living areas, and more.' },
+  { icon: Layers,     title: 'Deep Cleaning',          description: 'A thorough top-to-bottom clean, reaching every corner your regular routine misses.' },
+  { icon: Key,        title: 'Move-In / Move-Out',     description: 'Start fresh or leave a sparkling impression for the next occupants.' },
+  { icon: Building2,  title: 'Short-Term Rental',      description: 'Fast, reliable turnovers for Airbnb and VRBO hosts — guest-ready every time.' },
+  { icon: MoveRight,  title: 'Commercial Cleaning',    description: 'Professional cleaning for offices and commercial spaces, done on your schedule.' },
 ];
 
 const trustBadges = [
@@ -63,21 +64,19 @@ function StarRating({ count }: { count: number }) {
 function HeroPhoto() {
   return (
     <div className="relative hidden lg:block">
-      {/* Offset decorative ring — signature motif */}
       <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
       <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
         <img
-          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=85"
-          alt="Professional cleaner at work in a bright Arizona home"
+          src="/images/hero.jpg"
+          alt="Cleaning By Kandi professional cleaning a bright Arizona home"
           className="w-full h-full object-cover"
           width={800}
           height={1000}
           loading="eager"
           decoding="async"
+          fetchPriority="high"
         />
-        {/* Subtle gradient overlay so any overlaid text is readable */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" aria-hidden="true" />
-        {/* Floating badge */}
         <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg flex items-center gap-3">
           <ThumbsUp className="w-5 h-5 text-emerald-500" />
           <div>
@@ -100,6 +99,17 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
+              {/* Mobile-only: circular hero photo medallion */}
+              <div className="block lg:hidden mb-6">
+                <img
+                  src="/images/hero.jpg"
+                  alt="Cleaning By Kandi professional at work"
+                  className="w-20 h-20 rounded-full object-cover ring-4 ring-sky-400/30 shadow-lg"
+                  width={80}
+                  height={80}
+                />
+              </div>
+
               <motion.div
                 className="inline-flex items-center gap-2 bg-sky-600/20 border border-sky-500/30 text-sky-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6"
                 initial={{ opacity: 0, y: -12 }}
@@ -138,14 +148,14 @@ export default function Home() {
               >
                 <Link
                   to="/request-quote"
-                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
                 >
                   Get Your Free Quote
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <a
                   href="tel:4803097607"
-                  className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+                  className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
                 >
                   <Phone className="w-4 h-4" />
                   (480) 309-7607
@@ -203,7 +213,7 @@ export default function Home() {
           <FadeIn className="text-center mb-12">
             <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">What We Offer</p>
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Cleaning Built Around Your Life
+              Cleaning Built Around Your Life<SparkleAccent className="ml-2" />
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Whether it's weekly upkeep or a one-time deep clean, we have a service to match every need and budget.
@@ -211,8 +221,8 @@ export default function Home() {
           </FadeIn>
 
           <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map(({ icon: Icon, title, description }) => (
-              <StaggerItem key={title}>
+            {services.map(({ icon: Icon, title, description }, idx) => (
+              <StaggerItem key={title} className={idx >= 3 ? 'hidden sm:block' : undefined}>
                 <div className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-sky-300 hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
                   <div className="w-12 h-12 bg-sky-50 group-hover:bg-sky-600 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300">
                     <Icon className="w-6 h-6 text-sky-600 group-hover:text-white transition-colors duration-300" />
@@ -247,6 +257,16 @@ export default function Home() {
               </div>
             </StaggerItem>
           </StaggerGrid>
+
+          {/* Mobile-only: link to all 5 services (cards 4–5 are hidden on mobile) */}
+          <div className="mt-6 text-center sm:hidden">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-1.5 text-sky-600 font-semibold text-sm hover:underline min-h-[44px]"
+            >
+              See all 5 services <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -259,7 +279,7 @@ export default function Home() {
           >
             <Star className="w-8 h-8 fill-sky-500" />
           </div>
-          <blockquote className="text-3xl md:text-4xl font-heading font-medium text-slate-900 leading-tight italic mb-8">
+          <blockquote className="text-2xl md:text-3xl lg:text-4xl font-heading font-medium text-slate-900 leading-tight italic mb-8">
             &ldquo;My house has never looked so clean. They paid attention to every little detail.&rdquo;
           </blockquote>
           <p className="text-slate-500 font-medium">— Sarah M., Surprise, AZ</p>
@@ -276,8 +296,8 @@ export default function Home() {
                 <div className="absolute -top-3 -left-3 w-full h-full rounded-3xl border-2 border-emerald-400/40" aria-hidden="true" />
                 <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
                   <img
-                    src="https://images.unsplash.com/photo-1583397539538-5c8cc95c0ab4?auto=format&fit=crop&w=800&q=85"
-                    alt="Bright, freshly cleaned Arizona living room"
+                    src="/images/clean-home.jpg"
+                    alt="Bright, freshly cleaned Arizona living room interior"
                     className="w-full h-full object-cover"
                     width={800}
                     height={600}
@@ -312,7 +332,7 @@ export default function Home() {
               </ul>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 mt-8 text-sky-600 font-semibold hover:gap-3 transition-all duration-200 cursor-pointer"
+                className="inline-flex items-center gap-2 mt-8 text-sky-600 font-semibold hover:gap-3 transition-all duration-200 cursor-pointer min-h-[44px]"
               >
                 Learn our story <ArrowRight className="w-4 h-4" />
               </Link>
@@ -326,7 +346,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
             <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">Reviews</p>
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">What Our Clients Are Saying</h2>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">What Our Clients Are Saying<SparkleAccent className="ml-2" /></h2>
             <p className="text-slate-600">Real reviews from real Arizona families and business owners.</p>
           </FadeIn>
           <StaggerGrid className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -364,13 +384,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/request-quote"
-              className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+              className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
             >
               Request a Free Quote <ArrowRight className="w-4 h-4" />
             </Link>
             <a
               href="tel:4803097607"
-              className="inline-flex items-center justify-center gap-2 border border-white/30 hover:bg-white/10 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+              className="inline-flex items-center justify-center gap-2 border border-white/30 hover:bg-white/10 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
             >
               <Phone className="w-4 h-4" /> Call Us Now
             </a>

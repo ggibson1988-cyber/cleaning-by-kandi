@@ -13,8 +13,8 @@ const services = [
     title: 'Residential Cleaning',
     tagline: 'Consistent, reliable home cleaning on your schedule.',
     description: 'Our residential cleaning service is designed to keep your home fresh and tidy week after week. Whether you need weekly, bi-weekly, or monthly visits, we\'ll customize a plan that fits your home and lifestyle.',
-    photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=85',
-    photoAlt: 'Clean bright kitchen with sparkling countertops',
+    photo: '/images/residential.jpg',
+    photoAlt: 'Professional cleaning supplies and tools ready for a residential home cleaning in Arizona',
     includes: [
       'Kitchen cleaning (counters, stovetop, sink, exterior of appliances)',
       'Bathroom scrubbing and sanitizing',
@@ -29,8 +29,8 @@ const services = [
     title: 'Deep Cleaning',
     tagline: 'A thorough, top-to-bottom clean for every corner of your home.',
     description: 'Perfect for first-time clients, spring cleaning, or when your home needs extra attention. Our deep cleaning service reaches places that regular cleaning misses — leaving your home truly spotless.',
-    photo: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=800&q=85',
-    photoAlt: 'Sparkling clean kitchen appliances and surfaces',
+    photo: '/images/deep-clean.jpg',
+    photoAlt: 'Sparkling clean kitchen after a deep cleaning service — every surface and appliance addressed',
     includes: [
       'Interior oven and refrigerator cleaning',
       'Cleaning behind and underneath appliances',
@@ -45,8 +45,8 @@ const services = [
     title: 'Move-In / Move-Out Cleaning',
     tagline: 'Start fresh — or leave a great impression behind.',
     description: 'Moving is stressful enough. Let us handle the cleaning so you can focus on everything else. Our move-in/move-out service ensures properties are immaculate for new occupants — and helps renters recover security deposits.',
-    photo: 'https://images.unsplash.com/photo-1560185007-5f0bb1866cab?auto=format&fit=crop&w=800&q=85',
-    photoAlt: 'Clean empty room ready for move-in',
+    photo: '/images/move-out.jpg',
+    photoAlt: 'Immaculately cleaned empty room ready for new tenants after a move-out cleaning',
     includes: [
       'Full deep clean of entire property',
       'Cleaning all appliances inside and out',
@@ -61,8 +61,8 @@ const services = [
     title: 'Short-Term Rental Cleaning',
     tagline: 'Guest-ready turnovers for Airbnb, VRBO, and more.',
     description: 'First impressions make all the difference in short-term rentals. We specialize in fast, reliable turnovers that get your property guest-ready between bookings — helping you earn better reviews and more bookings.',
-    photo: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=85',
-    photoAlt: 'Beautifully prepared guest bedroom in a short-term rental',
+    photo: '/images/rental.jpg',
+    photoAlt: 'Guest-ready bedroom prepared for short-term rental guests — fresh linens and spotless surfaces',
     includes: [
       'Full clean of all rooms and bathrooms',
       'Linen and towel laundry (or swap)',
@@ -77,8 +77,8 @@ const services = [
     title: 'Commercial Cleaning',
     tagline: 'Professional cleaning for offices and commercial spaces.',
     description: 'A clean workspace boosts morale, impresses clients, and promotes employee health. Cleaning By Kandi offers professional commercial cleaning services tailored to your business hours and specific needs.',
-    photo: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=85',
-    photoAlt: 'Clean modern office space with natural light',
+    photo: '/images/commercial.jpg',
+    photoAlt: 'Clean, professional office space after commercial cleaning service — desks and floors spotless',
     includes: [
       'General office cleaning and sanitizing',
       'Restroom disinfection and restocking',
@@ -127,12 +127,12 @@ export default function Services() {
       {/* ── Quick nav ── */}
       <section className="bg-slate-50 border-b border-slate-200 sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1 overflow-x-auto py-3">
+          <div className="flex gap-1 overflow-x-auto py-3 snap-x snap-mandatory">
             {services.map((s) => (
               <a
                 key={s.id}
                 href={`#${s.id}`}
-                className="shrink-0 text-sm font-medium px-4 py-2 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition-colors duration-200 cursor-pointer whitespace-nowrap"
+                className="shrink-0 text-sm font-medium px-4 py-2 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 transition-colors duration-200 cursor-pointer whitespace-nowrap snap-start min-h-[44px] flex items-center"
               >
                 <span className={`${colorMap[s.color].check} font-bold mr-1`}>{s.num}</span>
                 {s.title}

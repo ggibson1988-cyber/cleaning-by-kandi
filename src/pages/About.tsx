@@ -7,6 +7,7 @@ import FadeIn from '../components/FadeIn';
 import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
+import SparkleAccent from '../components/SparkleAccent';
 
 const values = [
   { icon: Shield, title: 'Reliability',          description: 'When you book with Cleaning By Kandi, you can count on us to show up on time, every time. Your schedule is precious — we treat it that way.' },
@@ -78,8 +79,8 @@ export default function About() {
                 <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
                 <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
                   <img
-                    src="https://images.unsplash.com/photo-1527515637462-cff94edd22cb?auto=format&fit=crop&w=800&q=85"
-                    alt="Kandi and her cleaning team preparing for a job"
+                    src="/images/about-team.jpg"
+                    alt="Kandi and her professional cleaning team ready for a West Valley home cleaning"
                     className="w-full h-full object-cover"
                     width={800}
                     height={600}
@@ -125,7 +126,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
             <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">How We Work</p>
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Our Core Values</h2>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">Our Core Values<SparkleAccent className="ml-2" /></h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
               These aren't just words on a wall — they're the principles we show up with at every single clean.
             </p>
@@ -138,7 +139,7 @@ export default function About() {
                     <Icon className="w-5 h-5 text-sky-600" />
                   </div>
                   <h3 className="font-heading font-semibold text-slate-900 mb-2">{title}</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">{description}</p>
+                  <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">{description}</p>
                 </div>
               </StaggerItem>
             ))}

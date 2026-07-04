@@ -17,6 +17,10 @@
   --color-muted:         #475569;   /* slate-600 — 5.9:1 on white ✓ */
   --color-subtle:        #64748B;   /* slate-500 — 4.6:1 on white ✓ */
   --color-border:        #E2E8F0;
+  --color-success:       #059669;   /* emerald-600 — 4.5:1 on white ✓ */
+  --color-success-bg:    #ECFDF5;
+  --color-error:         #DC2626;   /* red-600 — 5.9:1 on white ✓ */
+  --color-error-bg:      #FEF2F2;
   --font-heading: 'Lexend', sans-serif;
   --font-body:    'Source Sans 3', sans-serif;
 }
