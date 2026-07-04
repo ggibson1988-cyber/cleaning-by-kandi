@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Home, Layers, Key, Building2, MoveRight,
@@ -82,18 +82,67 @@ export default function RequestQuote() {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [form, setForm] = useState<FormData>(INIT);
 
   const set = (key: keyof FormData) => (value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
 
   const canNext1 = form.serviceType !== '';
-  const canNext2 = Boolean(form.bedrooms && form.bathrooms && form.frequency);
+  const canNext2 = Boolean(form.bedrooms && form.bathrooms && form.sqft && form.frequency);
   const canSubmit = Boolean(form.firstName && form.lastName && form.email && form.phone && form.city);
 
   const goTo = (next: number) => {
     setDirection(next > step ? 1 : -1);
     setStep(next);
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const endpoint: string | undefined = import.meta.env.VITE_FORMSPREE_ENDPOINT;
+    if (!endpoint) {
+      setSubmitError('Form is not configured. Please call us at (480) 309-7607.');
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: `Quote Request — ${form.firstName} ${form.lastName}`,
+          _replyto: form.email,
+          'Service Type': form.serviceType,
+          Bedrooms: form.bedrooms,
+          Bathrooms: form.bathrooms,
+          'Square Footage': form.sqft || 'Not provided',
+          Frequency: form.frequency,
+          'First Name': form.firstName,
+          'Last Name': form.lastName,
+          Email: form.email,
+          Phone: form.phone,
+          City: form.city,
+          Address: form.address || 'Not provided',
+          'Preferred Date': form.preferredDate || 'Flexible',
+          Notes: form.notes || 'None',
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error ?? 'Submission failed. Please try again.');
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : 'Something went wrong. Please try again or call us at (480) 309-7607.',
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   /* ── Success state ── */
@@ -142,7 +191,7 @@ export default function RequestQuote() {
           <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 md:p-10 overflow-hidden">
             <StepIndicator current={step} total={TOTAL_STEPS} />
 
-            <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} noValidate>
+            <form onSubmit={handleSubmit} noValidate>
               <AnimatePresence mode="wait" custom={direction} initial={false}>
                 {/* ── Step 1: Service ── */}
                 {step === 1 && (
@@ -213,8 +262,8 @@ export default function RequestQuote() {
                         </div>
                       </div>
                       <div>
-                        <FieldLabel htmlFor="sqft">Approx. Square Footage</FieldLabel>
-                        <input id="sqft" type="number" value={form.sqft} onChange={(e) => set('sqft')(e.target.value)} placeholder="e.g. 1800" className={inputCls} />
+                        <FieldLabel htmlFor="sqft" required>Approx. Square Footage</FieldLabel>
+                        <input id="sqft" type="number" value={form.sqft} onChange={(e) => set('sqft')(e.target.value)} placeholder="e.g. 1800" required className={inputCls} />
                       </div>
                       <div>
                         <FieldLabel htmlFor="frequency" required>How Often?</FieldLabel>
@@ -316,6 +365,12 @@ export default function RequestQuote() {
                 )}
               </AnimatePresence>
 
+              {submitError && (
+                <p role="alert" className="mt-6 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                  {submitError}
+                </p>
+              )}
+
               {/* Navigation */}
               <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-100">
                 {step > 1 ? (
@@ -336,10 +391,10 @@ export default function RequestQuote() {
                 ) : (
                   <button
                     type="submit"
-                    disabled={!canSubmit}
+                    disabled={!canSubmit || submitting}
                     className="inline-flex items-center gap-2 bg-brand-success hover:bg-brand-success-dark disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer text-sm"
                   >
-                    <Sparkles className="w-4 h-4" /> Submit Quote Request
+                    {submitting ? 'Sending…' : <><Sparkles className="w-4 h-4" /> Submit Quote Request</>}
                   </button>
                 )}
               </div>

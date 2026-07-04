@@ -70,7 +70,7 @@ export default function Terms() {
         <section>
           <h2 className="text-xl font-bold text-slate-900 mb-3">7. Liability</h2>
           <p className="text-slate-600 leading-relaxed">
-            Cleaning By Kandi is fully insured and bonded. In the unlikely event of damage caused by our team, please report it within 24 hours of the service. Our liability is limited to the cost of repair or replacement of the damaged item(s), not to exceed the value of the cleaning service provided. We are not responsible for pre-existing damage, items left unsecured, or normal wear and tear.
+            Cleaning By Kandi is fully insured. In the unlikely event of damage caused by our team, please report it within 24 hours of the service. Our liability is limited to the cost of repair or replacement of the damaged item(s), not to exceed the value of the cleaning service provided. We are not responsible for pre-existing damage, items left unsecured, or normal wear and tear.
           </p>
         </section>
 

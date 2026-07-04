@@ -34,7 +34,6 @@ const services = [
     includes: [
       'Interior oven and refrigerator cleaning',
       'Cleaning behind and underneath appliances',
-      'Detailed scrubbing of grout and tile',
       'Baseboards, window sills, and door frames',
       'Light switches and outlet plates',
       'Inside cabinets and drawers (upon request)',

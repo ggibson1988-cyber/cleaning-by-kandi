@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import {
   Heart, Shield, Star, Clock, CheckCircle,
-  ArrowRight, Leaf, Award,
+  ArrowRight,
 } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
 import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
@@ -10,19 +10,16 @@ import BubblePattern from '../components/BubblePattern';
 import SparkleAccent from '../components/SparkleAccent';
 
 const values = [
-  { icon: Shield, title: 'Reliability',          description: 'When you book with Cleaning By Kandi, you can count on us to show up on time, every time. Your schedule is precious — we treat it that way.' },
-  { icon: Star,   title: 'Attention to Detail',  description: 'We clean the baseboards, wipe the light switches, and get behind the appliances. The little things are exactly what sets us apart.' },
-  { icon: Heart,  title: 'Care & Respect',       description: 'Your home is your sanctuary. We treat every space with the same respect we\'d give our own — handling belongings with care.' },
-  { icon: Leaf,   title: 'Eco-Friendly',         description: 'We use environmentally safe cleaning products that are effective without harsh chemicals — better for your family, pets, and planet.' },
-  { icon: Clock,  title: 'Flexible Scheduling',  description: 'Life is busy. That\'s why we offer weekly, bi-weekly, monthly, and one-time cleanings — scheduled around what works best for you.' },
-  { icon: Award,  title: 'Satisfaction Guarantee', description: 'Not satisfied? Let us know within 24 hours and we\'ll come back to make it right — no questions asked.' },
+  { icon: Shield, title: 'Reliability',         description: 'When you book with Cleaning By Kandi, you can count on us to show up on time, every time. Your schedule is precious — we treat it that way.' },
+  { icon: Star,   title: 'Attention to Detail', description: 'We clean the baseboards, wipe the light switches, and get behind the appliances. The little things are exactly what sets us apart.' },
+  { icon: Heart,  title: 'Care & Respect',      description: 'Your home is your sanctuary. We treat every space with the same respect we\'d give our own — handling belongings with care.' },
+  { icon: Clock,  title: 'Flexible Scheduling', description: 'Life is busy. That\'s why we offer weekly, bi-weekly, monthly, and one-time cleanings — scheduled around what works best for you.' },
 ];
 
 const milestones = [
   { year: 'Founded',   label: 'Cleaning By Kandi was born from a passion for helping families reclaim their time and come home to a space they love.' },
-  { year: '100 Clients', label: 'Word spread quickly — neighbors told neighbors, and our reputation grew through genuine care and excellent results.' },
-  { year: '6 Cities',  label: 'Expanded to serve all of the West Valley: Surprise, Peoria, Glendale, Sun City, Goodyear, and Buckeye.' },
-  { year: '500+ Clients', label: 'Trusted by hundreds of Arizona homeowners, Airbnb hosts, and local businesses — and growing every month.' },
+  { year: 'Growing',   label: 'Word spread quickly — neighbors told neighbors, and our reputation grew through genuine care and results that speak for themselves.' },
+  { year: 'West Valley', label: 'Expanded to serve all of the West Valley: Surprise, Peoria, Glendale, Sun City, Goodyear, and Buckeye.' },
 ];
 
 export default function About() {
@@ -62,7 +59,7 @@ export default function About() {
                   Living and working in the West Valley, I saw how many busy families, working professionals, and short-term rental hosts were struggling to keep up with the demands of a clean home. So I set out to build a cleaning service that felt more like having a trusted friend help out — someone who genuinely cares about the result.
                 </p>
                 <p>
-                  Today, Cleaning By Kandi serves hundreds of clients across six Arizona cities. Every member of our team shares my commitment to reliability, thoroughness, and treating every home with the respect it deserves.
+                  Today, Cleaning By Kandi serves clients across six West Valley cities. Every member of our team shares my commitment to reliability, thoroughness, and treating every home with the respect it deserves.
                 </p>
               </div>
               <Link
@@ -151,15 +148,13 @@ export default function About() {
       <section className="relative overflow-hidden bg-brand-primary py-16">
         <BubblePattern opacity={0.08} />
         <FadeIn className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Why Hundreds of Arizona Families Trust Us</h2>
+          <h2 className="text-3xl font-bold text-white mb-6">Why Arizona Families Trust Us</h2>
           <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {[
               'Locally owned & operated',
-              'Fully insured & bonded',
+              'Fully insured',
               'Background-checked team',
-              'Eco-friendly products',
               'No long-term contracts',
-              '100% satisfaction guarantee',
             ].map((item) => (
               <StaggerItem key={item}>
                 <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-3">

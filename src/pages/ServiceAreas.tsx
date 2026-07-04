@@ -6,58 +6,184 @@ import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 
 const cities = [
-  { name: 'Surprise',  description: 'Our home base! We serve all neighborhoods — from Marley Park to Asante.',            zip: ['85374', '85378', '85379', '85388'], highlight: true  },
-  { name: 'Peoria',    description: 'Covering Lake Pleasant, Vistancia, and the historic downtown district.',              zip: ['85345', '85380', '85381', '85382', '85383'], highlight: false },
-  { name: 'Glendale',  description: 'Serving homes and businesses throughout Glendale, including Westgate and Arrowhead.', zip: ['85301', '85302', '85303', '85304', '85305', '85306'], highlight: false },
-  { name: 'Sun City',  description: 'Proud to serve the Sun City community with trusted, attentive cleaning services.',    zip: ['85351', '85372', '85373'], highlight: false },
-  { name: 'Goodyear',  description: 'Covering Palm Valley, Estrella Mountain Ranch, and Goodyear neighborhoods.',          zip: ['85338', '85395'], highlight: false },
-  { name: 'Buckeye',   description: 'Serving growing communities from Tartesso to Festival Ranch.',                        zip: ['85326', '85396'], highlight: false },
+  { name: 'Peoria',   description: 'Our home base! Proudly serving Lake Pleasant, Vistancia, and all Peoria neighborhoods.',           zip: ['85345', '85380', '85381', '85382', '85383'], highlight: true  },
+  { name: 'Surprise', description: 'We serve all Surprise neighborhoods — from Marley Park to Asante.',                                zip: ['85374', '85378', '85379', '85388'], highlight: false },
+  { name: 'Glendale', description: 'Serving homes and businesses throughout Glendale, including Westgate and Arrowhead.',              zip: ['85301', '85302', '85303', '85304', '85305', '85306'], highlight: false },
+  { name: 'Goodyear', description: 'Covering Palm Valley, Estrella Mountain Ranch, and Goodyear neighborhoods.',                      zip: ['85338', '85395'], highlight: false },
+  { name: 'Phoenix',  description: 'Serving homes and businesses across central and west Phoenix.',                                   zip: ['85009', '85013', '85015', '85017', '85019', '85031', '85033', '85035'], highlight: false },
+  { name: 'And More', description: 'Don\'t see your city? We may still be able to help — give us a call!',                           zip: [], highlight: false },
 ];
 
-const ArizonaMap = () => (
-  <div className="relative w-full max-w-lg mx-auto">
-    <svg
-      viewBox="0 0 400 300"
-      className="w-full"
-      aria-label="Map showing Cleaning By Kandi service area in the West Valley, Arizona"
-      role="img"
-    >
-      {/* AZ state silhouette — simplified */}
-      <path d="M100 20 L340 20 L360 80 L360 220 L300 220 L300 260 L160 260 L160 200 L80 200 L80 80 Z" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="2" />
-      {/* West Valley highlight */}
-      <ellipse cx="185" cy="135" rx="80" ry="55" fill="#bae6fd" stroke="#0ea5e9" strokeWidth="2" opacity="0.7" />
-      {/* City markers */}
-      {[
-        { x: 175, y: 110, name: 'Surprise',  primary: true },
-        { x: 200, y: 122, name: 'Peoria',    primary: false },
-        { x: 222, y: 140, name: 'Glendale',  primary: false },
-        { x: 163, y: 126, name: 'Sun City',  primary: false },
-        { x: 155, y: 150, name: 'Goodyear',  primary: false },
-        { x: 128, y: 168, name: 'Buckeye',   primary: false },
-      ].map((city) => (
-        <g key={city.name}>
-          <circle cx={city.x} cy={city.y} r={city.primary ? 7 : 5} fill={city.primary ? '#0284c7' : '#0369a1'} stroke="white" strokeWidth="1.5" />
-          <text x={city.x + 10} y={city.y + 4} fontSize="9" fontFamily="Lexend, sans-serif" fontWeight={city.primary ? '700' : '600'} fill="#0f172a">
-            {city.name}
-          </text>
+const ArizonaMap = () => {
+  const pins = [
+    { x: 227, y: 173, name: 'Surprise', primary: false, lx: 240, ly: 158, anchor: 'start' as const },
+    { x: 319, y: 201, name: 'Peoria',   primary: true,  lx: 332, ly: 184, anchor: 'start' as const },
+    { x: 354, y: 225, name: 'Glendale', primary: false, lx: 367, ly: 210, anchor: 'start' as const },
+    { x: 234, y: 284, name: 'Goodyear', primary: false, lx: 247, ly: 269, anchor: 'start' as const },
+    { x: 433, y: 276, name: 'Phoenix',  primary: false, lx: 415, ly: 261, anchor: 'end'   as const },
+  ];
+
+  return (
+    <div className="relative w-full max-w-lg mx-auto">
+      <svg
+        viewBox="0 0 480 380"
+        className="w-full rounded-2xl"
+        aria-label="Map showing Cleaning By Kandi service area in the West Valley, Arizona"
+        role="img"
+      >
+        <defs>
+          <linearGradient id="cbkDesertBg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#EDE5C8" />
+            <stop offset="100%" stopColor="#DED0A5" />
+          </linearGradient>
+          <filter id="cbkPin" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2.2" floodOpacity="0.22" floodColor="#5C3A10" />
+          </filter>
+        </defs>
+
+        {/* Desert base */}
+        <rect width="480" height="380" fill="url(#cbkDesertBg)" rx="14" />
+
+        {/* White Tank Mountains (west) */}
+        <path d="M38 288 L56 252 L70 266 L84 240 L100 258 L118 236 L128 250 L138 234 L146 249 L152 240 L158 257 L148 288 Z"
+              fill="#C8A870" opacity="0.40" />
+        {/* Estrella Mountains (SW) */}
+        <path d="M64 374 L82 340 L96 354 L110 324 L124 342 L136 323 L145 338 L150 374 Z"
+              fill="#BF9E6A" opacity="0.34" />
+
+        {/* Lake Pleasant */}
+        <path d="M283 27 Q298 17 318 21 Q340 17 351 35 Q354 50 343 61 Q329 71 311 67 Q293 71 279 58 Q271 46 283 27 Z"
+              fill="#A8C8DC" stroke="#88B2CC" strokeWidth="1.2" opacity="0.88" />
+        <text x="314" y="45" textAnchor="middle" fontSize="7" fontFamily="system-ui,-apple-system,sans-serif"
+              fill="#4A88A4" fontWeight="600" letterSpacing="0.3">Lake Pleasant</text>
+
+        {/* Urban developed areas (lighter cream patches) */}
+        <rect x="186" y="143" width="83" height="73" fill="#F2EAD2" opacity="0.50" rx="5" />
+        <rect x="257" y="153" width="106" height="96" fill="#F2EAD2" opacity="0.50" rx="5" />
+        <rect x="317" y="189" width="82" height="82" fill="#F2EAD2" opacity="0.48" rx="5" />
+        <rect x="197" y="258" width="68" height="58" fill="#F2EAD2" opacity="0.42" rx="5" />
+
+        {/* Street grid */}
+        {[158, 178, 198, 218, 238, 258, 278].map((y) => (
+          <line key={`h${y}`} x1="156" y1={y} x2="434" y2={y} stroke="#F5EDD8" strokeWidth="0.7" opacity="0.65" />
+        ))}
+        {[196, 229, 263, 296, 329, 362, 396].map((x) => (
+          <line key={`v${x}`} x1={x} y1="120" x2={x} y2="344" stroke="#F5EDD8" strokeWidth="0.7" opacity="0.65" />
+        ))}
+
+        {/* Major arterials */}
+        <line x1="163" y1="168" x2="434" y2="168" stroke="#E8DEC0" strokeWidth="2.0" opacity="0.78" />
+        <line x1="163" y1="192" x2="434" y2="192" stroke="#E8DEC0" strokeWidth="2.0" opacity="0.78" />
+        <line x1="186" y1="213" x2="434" y2="213" stroke="#E8DEC0" strokeWidth="1.6" opacity="0.68" />
+        <line x1="186" y1="241" x2="434" y2="241" stroke="#E8DEC0" strokeWidth="1.6" opacity="0.68" />
+
+        {/* Loop 303 – N/S through Surprise & Goodyear */}
+        <path d="M226 93 L226 176 Q228 206 234 226 L234 289"
+              fill="none" stroke="#C8A445" strokeWidth="3.2" strokeLinecap="round" opacity="0.87" />
+        <path d="M226 93 L226 176 Q228 206 234 226 L234 289"
+              fill="none" stroke="#F0D580" strokeWidth="1.6" strokeLinecap="round" opacity="0.72" />
+
+        {/* Loop 101 – N/S through Sun City & Peoria */}
+        <path d="M303 93 L303 199 Q306 229 315 249 L323 316"
+              fill="none" stroke="#C8A445" strokeWidth="3.2" strokeLinecap="round" opacity="0.87" />
+        <path d="M303 93 L303 199 Q306 229 315 249 L323 316"
+              fill="none" stroke="#F0D580" strokeWidth="1.6" strokeLinecap="round" opacity="0.72" />
+
+        {/* I-10 – E/W through Goodyear & Buckeye */}
+        <path d="M68 287 L435 287"
+              fill="none" stroke="#C8A445" strokeWidth="3.8" strokeLinecap="round" opacity="0.87" />
+        <path d="M68 287 L435 287"
+              fill="none" stroke="#F0D580" strokeWidth="2.0" strokeLinecap="round" opacity="0.72" />
+
+        {/* I-17 – N/S eastern corridor */}
+        <path d="M399 93 L399 346"
+              fill="none" stroke="#C8A445" strokeWidth="3.8" strokeLinecap="round" opacity="0.87" />
+        <path d="M399 93 L399 346"
+              fill="none" stroke="#F0D580" strokeWidth="2.0" strokeLinecap="round" opacity="0.72" />
+
+        {/* Grand Ave diagonal */}
+        <path d="M422 265 L196 130"
+              fill="none" stroke="#C8A445" strokeWidth="2.2" strokeLinecap="round" opacity="0.58" />
+
+        {/* Freeway shields */}
+        <rect x="205" y="96" width="22" height="13" rx="3" fill="#B89038" opacity="0.92" />
+        <text x="216" y="106" textAnchor="middle" fontSize="7.5" fontFamily="system-ui,sans-serif" fill="white" fontWeight="800">303</text>
+        <rect x="281" y="96" width="22" height="13" rx="3" fill="#B89038" opacity="0.92" />
+        <text x="292" y="106" textAnchor="middle" fontSize="7.5" fontFamily="system-ui,sans-serif" fill="white" fontWeight="800">101</text>
+        <rect x="80" y="271" width="24" height="13" rx="3" fill="#B89038" opacity="0.92" />
+        <text x="92" y="281" textAnchor="middle" fontSize="7.5" fontFamily="system-ui,sans-serif" fill="white" fontWeight="800">I-10</text>
+        <rect x="378" y="96" width="24" height="13" rx="3" fill="#B89038" opacity="0.92" />
+        <text x="390" y="106" textAnchor="middle" fontSize="7.5" fontFamily="system-ui,sans-serif" fill="white" fontWeight="800">I-17</text>
+
+        {/* Service area boundary */}
+        <polygon
+          points="196,138 251,128 311,138 379,165 462,195 472,252 468,308 415,338 310,340 220,310 160,290 115,255 115,205 162,188"
+          fill="#C87030" fillOpacity="0.10" stroke="#B06028" strokeWidth="1.8" strokeOpacity="0.38" strokeDasharray="5,4"
+        />
+
+        {/* Service area label */}
+        <text x="280" y="362" textAnchor="middle" fontSize="7.5" fontFamily="system-ui,-apple-system,sans-serif"
+              fill="#9A5020" fontWeight="700" letterSpacing="1.0" opacity="0.75">
+          PHOENIX METRO SERVICE AREA
+        </text>
+
+        {/* City pins */}
+        {pins.map((city) => (
+          <g
+            key={`pin-${city.name}`}
+            transform={`translate(${city.x}, ${city.y}) scale(${city.primary ? 1.28 : 1})`}
+            filter="url(#cbkPin)"
+          >
+            <path
+              d="M0,0 C-8,-4 -10,-9 -10,-14 C-10,-20 -5,-24 0,-24 C5,-24 10,-20 10,-14 C10,-9 8,-4 0,0 Z"
+              fill={city.primary ? '#CF4520' : '#3876C4'}
+            />
+            <circle cy="-14" r="4" fill="white" opacity="0.92" />
+          </g>
+        ))}
+
+        {/* City labels */}
+        {pins.map((city) => (
+          <g key={`lbl-${city.name}`}>
+            <text
+              x={city.lx} y={city.ly}
+              textAnchor={city.anchor}
+              fontSize={city.primary ? 10 : 9}
+              fontFamily="system-ui,-apple-system,sans-serif"
+              fontWeight={city.primary ? '700' : '600'}
+              fill={city.primary ? '#180800' : '#2A1E10'}
+            >
+              {city.name}
+            </text>
+            {city.primary && (
+              <text
+                x={city.lx} y={city.ly + 11}
+                textAnchor={city.anchor}
+                fontSize="7.5"
+                fontFamily="system-ui,-apple-system,sans-serif"
+                fontWeight="700"
+                fill="#CF4520"
+                letterSpacing="0.5"
+              >
+                HOME BASE
+              </text>
+            )}
+          </g>
+        ))}
+
+        {/* North indicator */}
+        <g transform="translate(456, 30)">
+          <circle r="13" fill="white" fillOpacity="0.85" />
+          <polygon points="0,-8 -3,-1 3,-1" fill="#CF4520" opacity="0.88" />
+          <text y="8" textAnchor="middle" fontSize="10" fontFamily="system-ui,sans-serif" fill="#666" fontWeight="700">N</text>
         </g>
-      ))}
-      <text x="185" y="195" textAnchor="middle" fontSize="8" fontFamily="Lexend, sans-serif" fill="#0369a1" fontWeight="700">
-        WEST VALLEY SERVICE AREA
-      </text>
-      {/* Phoenix reference */}
-      <circle cx="258" cy="152" r="3" fill="#94a3b8" />
-      <text x="266" y="156" fontSize="8" fontFamily="sans-serif" fill="#64748b">Phoenix</text>
-      {/* North indicator */}
-      <text x="355" y="40" fontSize="10" fontFamily="sans-serif" fill="#64748b" fontWeight="700">N</text>
-      <line x1="358" y1="43" x2="358" y2="56" stroke="#64748b" strokeWidth="1.5" />
-      <polygon points="358,43 355,51 361,51" fill="#64748b" />
-    </svg>
-    <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-500 backdrop-blur-sm">
-      Approximate area
+      </svg>
+      <div className="absolute bottom-3 right-3 bg-white/85 border border-amber-200/50 rounded-lg px-2.5 py-1.5 text-xs text-amber-800/60 backdrop-blur-sm">
+        Approximate area
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function ServiceAreas() {
   return (
@@ -72,7 +198,7 @@ export default function ServiceAreas() {
               West Valley, Arizona
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              Serving 6 Arizona Communities
+              Serving the Phoenix Metro Area
             </h1>
             <p className="text-slate-300 text-lg max-w-2xl mx-auto">
               Based in the West Valley, Cleaning By Kandi delivers top-tier cleaning services to homes and businesses across the region.
@@ -123,7 +249,7 @@ export default function ServiceAreas() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-heading font-semibold text-slate-900">{city.name}, AZ</h3>
+                          <h3 className="font-heading font-semibold text-slate-900">{city.name === 'And More' ? city.name : `${city.name}, AZ`}</h3>
                           {city.highlight && (
                             <span className="text-xs bg-sky-100 text-sky-700 font-medium px-2 py-0.5 rounded-full">Our Base</span>
                           )}
@@ -177,11 +303,9 @@ export default function ServiceAreas() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left max-w-2xl mx-auto mb-8">
               {[
-                'Fully insured & bonded team',
-                'Eco-friendly cleaning products',
+                'Fully insured team',
                 'Flexible scheduling options',
                 'Consistent, trained cleaners',
-                'Satisfaction guarantee on every visit',
                 'Free, no-obligation quotes',
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2.5 bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">

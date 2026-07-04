@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   Shield, Star, CheckCircle, Phone, ArrowRight,
   Home as HomeIcon, Layers, MoveRight, Building2, Key,
-  Clock, ThumbsUp, Leaf, Award,
+  Clock, Users,
 } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
 import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
@@ -21,44 +21,26 @@ const services = [
 ];
 
 const trustBadges = [
-  { icon: Shield, label: 'Fully Insured' },
-  { icon: Award,  label: 'Bonded & Vetted' },
-  { icon: Leaf,   label: 'Eco-Friendly' },
-  { icon: Clock,  label: 'On-Time Guarantee' },
+  { icon: Shield,      label: 'Fully Insured' },
+  { icon: Users,       label: 'Background-Checked' },
+  { icon: Clock,       label: 'On-Time & Reliable' },
+  { icon: CheckCircle, label: 'Locally Owned' },
 ];
 
 const testimonials = [
   {
-    name: 'Sarah M.', location: 'Surprise, AZ', rating: 5,
-    text: 'Kandi and her team are absolutely incredible! My house has never looked so clean. They paid attention to every little detail and even cleaned areas I forgot to mention.',
+    name: 'Wendy W.',
+    text: 'Kandi has been cleaning for my family and I for almost a year now. She is always on time and communicates well. She always leaves our house looking and smelling clean. We are even able to leave our three dogs in the house with her while she cleans and she treats them like her own.',
   },
   {
-    name: 'James T.', location: 'Peoria, AZ', rating: 5,
-    text: 'I use Cleaning By Kandi for my Airbnb property. The turnovers are flawless — guests always comment on how clean and fresh everything is. Bookings have improved since I started.',
+    name: 'Sonja W.',
+    text: 'Kandi has been cleaning my short-term rental for a year now. She is the absolute best! I consider myself a pretty picky person and she nails it every time. She always goes above and beyond. I highly recommend her!',
   },
   {
-    name: 'Linda R.', location: 'Glendale, AZ', rating: 5,
-    text: 'After moving out, Kandi did a move-out clean that looked better than when I moved in. Got my full deposit back — worth every penny!',
+    name: 'Roger B.',
+    text: 'Kandi always goes above and beyond when she cleans our short term rental. Her attention to detail is unmatched and we cannot recommend her enough. Thanks for being so great Kandi!!',
   },
 ];
-
-const stats = [
-  { value: '500+', label: 'Happy Clients' },
-  { value: '5★',   label: 'Average Rating' },
-  { value: '3+',   label: 'Years in AZ' },
-  { value: '6',    label: 'Cities Served' },
-];
-
-/* ─── Star rating ────────────────────────────────────────── */
-function StarRating({ count }: { count: number }) {
-  return (
-    <div className="flex gap-0.5" aria-label={`${count} out of 5 stars`}>
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-      ))}
-    </div>
-  );
-}
 
 /* ─── Hero photo frame ───────────────────────────────────── */
 function HeroPhoto() {
@@ -78,10 +60,10 @@ function HeroPhoto() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" aria-hidden="true" />
         <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg flex items-center gap-3">
-          <ThumbsUp className="w-5 h-5 text-brand-accent" />
+          <Shield className="w-5 h-5 text-brand-primary" />
           <div>
-            <div className="text-xs text-slate-500 font-medium">Satisfaction Rate</div>
-            <div className="font-heading font-bold text-slate-900 text-xl tabular leading-none">100%</div>
+            <div className="text-xs text-slate-500 font-medium">Serving</div>
+            <div className="font-heading font-bold text-slate-900 text-base leading-tight">West Valley, AZ</div>
           </div>
         </div>
       </div>
@@ -193,20 +175,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Stats ── */}
-      <section className="bg-brand-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <StaggerGrid className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {stats.map(({ value, label }) => (
-              <StaggerItem key={label}>
-                <div className="text-4xl font-bold font-heading text-white mb-1 tabular">{value}</div>
-                <div className="text-sky-100 text-sm">{label}</div>
-              </StaggerItem>
-            ))}
-          </StaggerGrid>
-        </div>
-      </section>
-
       {/* ── Services ── */}
       <section className="py-16 md:py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -280,9 +248,9 @@ export default function Home() {
             <Star className="w-8 h-8 fill-sky-500" />
           </div>
           <blockquote className="text-2xl md:text-3xl lg:text-4xl font-heading font-medium text-slate-900 leading-tight italic mb-8">
-            &ldquo;My house has never looked so clean. They paid attention to every little detail.&rdquo;
+            &ldquo;I consider myself a pretty picky person and she nails it every time. She always goes above and beyond.&rdquo;
           </blockquote>
-          <p className="text-slate-500 font-medium">— Sarah M., Surprise, AZ</p>
+          <p className="text-slate-500 font-medium">— Sonja W.</p>
         </FadeIn>
       </section>
 
@@ -314,15 +282,13 @@ export default function Home() {
                 Why Families & Businesses Choose Kandi
               </h2>
               <p className="text-slate-600 leading-relaxed mb-8">
-                We're not just a cleaning service — we're your trusted partner in keeping your space healthy, welcoming, and spotless. Every visit is backed by our satisfaction guarantee.
+                We're not just a cleaning service — we're your trusted partner in keeping your space healthy, welcoming, and spotless.
               </p>
               <ul className="space-y-4">
                 {[
                   'Locally owned and operated in the West Valley',
-                  'Fully insured, bonded, and background-checked team',
-                  'Eco-friendly, safe cleaning products',
+                  'Fully insured and background-checked team',
                   'Flexible scheduling — weekly, bi-weekly, or one-time',
-                  '100% satisfaction guarantee on every clean',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
@@ -353,16 +319,12 @@ export default function Home() {
             {testimonials.map((t) => (
               <StaggerItem key={t.name}>
                 <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 h-full flex flex-col">
-                  <StarRating count={t.rating} />
-                  <p className="text-slate-700 leading-relaxed mt-4 mb-6 text-sm flex-1">&ldquo;{t.text}&rdquo;</p>
+                  <p className="text-slate-700 leading-relaxed mb-6 text-sm flex-1">&ldquo;{t.text}&rdquo;</p>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center font-bold text-sky-700 text-sm font-heading shrink-0">
                       {t.name.charAt(0)}
                     </div>
-                    <div>
-                      <div className="font-semibold text-slate-900 text-sm">{t.name}</div>
-                      <div className="text-slate-500 text-xs">{t.location}</div>
-                    </div>
+                    <div className="font-semibold text-slate-900 text-sm">{t.name}</div>
                   </div>
                 </div>
               </StaggerItem>

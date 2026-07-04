@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Sparkles, Globe, Share2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Sparkles, Globe } from 'lucide-react';
 
 const services = [
   'Residential Cleaning',
@@ -9,7 +9,7 @@ const services = [
   'Commercial Cleaning',
 ];
 
-const areas = ['Surprise', 'Peoria', 'Glendale', 'Sun City', 'Goodyear', 'Buckeye'];
+const areas = ['Peoria', 'Surprise', 'Glendale', 'Sun City', 'Goodyear', 'Buckeye'];
 
 export default function Footer() {
   return (
@@ -42,10 +42,10 @@ export default function Footer() {
               </a>
               <a
                 href="mailto:cleaningbykandi@yahoo.com"
-                aria-label="Share"
+                aria-label="Email us"
                 className="w-9 h-9 bg-slate-800 hover:bg-brand-primary rounded-lg flex items-center justify-center transition-colors duration-200 cursor-pointer"
               >
-                <Share2 className="w-4 h-4" />
+                <Mail className="w-4 h-4" />
               </a>
             </div>
           </div>
