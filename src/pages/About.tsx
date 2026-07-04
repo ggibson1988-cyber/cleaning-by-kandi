@@ -50,7 +50,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <FadeIn direction="left">
-              <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">Our Founder</p>
+              <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-2">Our Founder</p>
               <h2 className="text-4xl font-bold text-slate-900 mb-6">
                 The Story Behind Cleaning By Kandi
               </h2>
@@ -67,7 +67,7 @@ export default function About() {
               </div>
               <Link
                 to="/request-quote"
-                className="inline-flex items-center gap-2 mt-8 bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer"
+                className="inline-flex items-center gap-2 mt-8 bg-brand-primary hover:bg-brand-primary-dark text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer"
               >
                 Book Your First Clean <ArrowRight className="w-4 h-4" />
               </Link>
@@ -107,7 +107,7 @@ export default function About() {
               {milestones.map(({ year, label }, idx) => (
                 <FadeIn key={year} delay={idx * 0.1}>
                   <div className="flex gap-6 items-start">
-                    <div className="relative w-12 h-12 bg-sky-600 rounded-full flex items-center justify-center shrink-0 z-10">
+                    <div className="relative w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center shrink-0 z-10">
                       <span className="text-white font-bold font-heading text-[10px] text-center leading-tight px-1">{year}</span>
                     </div>
                     <div className="bg-white rounded-2xl p-5 border border-slate-200 flex-1 shadow-sm">
@@ -125,7 +125,7 @@ export default function About() {
       <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">How We Work</p>
+            <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-2">How We Work</p>
             <h2 className="text-4xl font-bold text-slate-900 mb-4">Our Core Values<SparkleAccent className="ml-2" /></h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
               These aren't just words on a wall — they're the principles we show up with at every single clean.
@@ -136,7 +136,7 @@ export default function About() {
               <StaggerItem key={title}>
                 <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 h-full">
                   <div className="w-11 h-11 bg-sky-100 rounded-xl flex items-center justify-center mb-4">
-                    <Icon className="w-5 h-5 text-sky-600" />
+                    <Icon className="w-5 h-5 text-brand-primary" />
                   </div>
                   <h3 className="font-heading font-semibold text-slate-900 mb-2">{title}</h3>
                   <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">{description}</p>
@@ -148,7 +148,7 @@ export default function About() {
       </section>
 
       {/* ── Trust CTA ── */}
-      <section className="relative overflow-hidden bg-sky-600 py-16">
+      <section className="relative overflow-hidden bg-brand-primary py-16">
         <BubblePattern opacity={0.08} />
         <FadeIn className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Why Hundreds of Arizona Families Trust Us</h2>

@@ -29,7 +29,7 @@ export default function Terms() {
               'We reserve the right to reschedule due to staff illness, severe weather, or other unforeseen circumstances.',
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-slate-600 text-sm">
-                <span className="w-1.5 h-1.5 bg-sky-500 rounded-full shrink-0 mt-2" />
+                <span className="w-1.5 h-1.5 bg-brand-primary-light rounded-full shrink-0 mt-2" />
                 {item}
               </li>
             ))}
@@ -60,7 +60,7 @@ export default function Terms() {
               'Ensure pets are secured during the cleaning session.',
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-slate-600 text-sm">
-                <span className="w-1.5 h-1.5 bg-sky-500 rounded-full shrink-0 mt-2" />
+                <span className="w-1.5 h-1.5 bg-brand-primary-light rounded-full shrink-0 mt-2" />
                 {item}
               </li>
             ))}
@@ -110,10 +110,10 @@ export default function Terms() {
           <div className="mt-3 bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-1">
             <p className="font-semibold text-slate-900">Cleaning By Kandi</p>
             <p className="text-slate-600 text-sm">West Valley, Arizona</p>
-            <a href="mailto:cleaningbykandi@yahoo.com" className="text-sky-600 text-sm hover:underline cursor-pointer block">
+            <a href="mailto:cleaningbykandi@yahoo.com" className="text-brand-primary text-sm hover:underline cursor-pointer block">
               cleaningbykandi@yahoo.com
             </a>
-            <a href="tel:4803097607" className="text-sky-600 text-sm hover:underline cursor-pointer block">
+            <a href="tel:4803097607" className="text-brand-primary text-sm hover:underline cursor-pointer block">
               (480) 309-7607
             </a>
           </div>

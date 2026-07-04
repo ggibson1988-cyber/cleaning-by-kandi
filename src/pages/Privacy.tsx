@@ -24,7 +24,7 @@ export default function Privacy() {
               'Technical data such as IP address, browser type, and pages visited (via cookies)',
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-slate-600 text-sm">
-                <span className="w-1.5 h-1.5 bg-sky-500 rounded-full shrink-0 mt-2" />
+                <span className="w-1.5 h-1.5 bg-brand-primary-light rounded-full shrink-0 mt-2" />
                 {item}
               </li>
             ))}
@@ -45,7 +45,7 @@ export default function Privacy() {
               'Comply with legal obligations',
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-slate-600 text-sm">
-                <span className="w-1.5 h-1.5 bg-sky-500 rounded-full shrink-0 mt-2" />
+                <span className="w-1.5 h-1.5 bg-brand-primary-light rounded-full shrink-0 mt-2" />
                 {item}
               </li>
             ))}
@@ -77,11 +77,11 @@ export default function Privacy() {
           <h2 className="text-xl font-bold text-slate-900 mb-3">7. Your Rights</h2>
           <p className="text-slate-600 leading-relaxed">
             You have the right to access, correct, or delete the personal information we hold about you. To exercise these rights, please contact us at{' '}
-            <a href="mailto:cleaningbykandi@yahoo.com" className="text-sky-600 hover:underline cursor-pointer">
+            <a href="mailto:cleaningbykandi@yahoo.com" className="text-brand-primary hover:underline cursor-pointer">
               cleaningbykandi@yahoo.com
             </a>{' '}
             or call us at{' '}
-            <a href="tel:4803097607" className="text-sky-600 hover:underline cursor-pointer">
+            <a href="tel:4803097607" className="text-brand-primary hover:underline cursor-pointer">
               (480) 309-7607
             </a>.
           </p>
@@ -109,10 +109,10 @@ export default function Privacy() {
           <div className="mt-3 bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-1">
             <p className="font-semibold text-slate-900">Cleaning By Kandi</p>
             <p className="text-slate-600 text-sm">West Valley, Arizona</p>
-            <a href="mailto:cleaningbykandi@yahoo.com" className="text-sky-600 text-sm hover:underline cursor-pointer block">
+            <a href="mailto:cleaningbykandi@yahoo.com" className="text-brand-primary text-sm hover:underline cursor-pointer block">
               cleaningbykandi@yahoo.com
             </a>
-            <a href="tel:4803097607" className="text-sky-600 text-sm hover:underline cursor-pointer block">
+            <a href="tel:4803097607" className="text-brand-primary text-sm hover:underline cursor-pointer block">
               (480) 309-7607
             </a>
           </div>

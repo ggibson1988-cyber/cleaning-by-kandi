@@ -97,7 +97,7 @@ export default function ServiceAreas() {
                     <span
                       key={c.name}
                       className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
-                        c.highlight ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700'
+                        c.highlight ? 'bg-brand-primary text-white' : 'bg-slate-100 text-slate-700'
                       }`}
                     >
                       <MapPin className="w-3 h-3" />
@@ -118,7 +118,7 @@ export default function ServiceAreas() {
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${city.highlight ? 'bg-sky-600' : 'bg-slate-100'}`}>
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${city.highlight ? 'bg-brand-primary' : 'bg-slate-100'}`}>
                         <MapPin className={`w-4 h-4 ${city.highlight ? 'text-white' : 'text-slate-500'}`} />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -185,7 +185,7 @@ export default function ServiceAreas() {
                 'Free, no-obligation quotes',
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2.5 bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">
-                  <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-brand-accent shrink-0" />
                   <span className="text-slate-700 text-sm">{item}</span>
                 </div>
               ))}
@@ -204,7 +204,7 @@ export default function ServiceAreas() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/request-quote"
-              className="inline-flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-dark text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer"
             >
               Request a Quote <ArrowRight className="w-4 h-4" />
             </Link>

@@ -49,15 +49,15 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
         <div key={i} className="flex items-center gap-2">
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold font-heading transition-all duration-300 ${
-              i + 1 < current ? 'bg-emerald-500 text-white'
-              : i + 1 === current ? 'bg-sky-600 text-white ring-4 ring-sky-100'
+              i + 1 < current ? 'bg-brand-accent text-white'
+              : i + 1 === current ? 'bg-brand-primary text-white ring-4 ring-sky-100'
               : 'bg-slate-200 text-slate-500'
             }`}
           >
             {i + 1 < current ? <CheckCircle className="w-4 h-4" /> : i + 1}
           </div>
           {i < total - 1 && (
-            <div className={`w-12 h-0.5 transition-colors duration-300 ${i + 1 < current ? 'bg-emerald-500' : 'bg-slate-200'}`} />
+            <div className={`w-12 h-0.5 transition-colors duration-300 ${i + 1 < current ? 'bg-brand-accent' : 'bg-slate-200'}`} />
           )}
         </div>
       ))}
@@ -74,7 +74,7 @@ function FieldLabel({ htmlFor, children, required }: { htmlFor: string; children
   );
 }
 
-const inputCls = "w-full border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200";
+const inputCls = "w-full border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200";
 const iconInputCls = `${inputCls} pl-10`;
 
 /* ── Main component ── */
@@ -102,7 +102,7 @@ export default function RequestQuote() {
       <div className="min-h-[60vh] flex items-center justify-center px-4 py-20">
         <div className="max-w-md w-full text-center">
           <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="w-10 h-10 text-emerald-600" />
+            <Sparkles className="w-10 h-10 text-brand-success" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-4">Quote Request Received!</h1>
           <p className="text-slate-600 leading-relaxed mb-6">
@@ -111,11 +111,11 @@ export default function RequestQuote() {
           </p>
           <p className="text-slate-500 text-sm mb-8">
             For immediate assistance, call{' '}
-            <a href="tel:4803097607" className="text-sky-600 font-semibold hover:underline cursor-pointer">(480) 309-7607</a>
+            <a href="tel:4803097607" className="text-brand-primary font-semibold hover:underline cursor-pointer">(480) 309-7607</a>
           </p>
           <button
             onClick={() => { setSubmitted(false); setStep(1); setForm(INIT); }}
-            className="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer"
+            className="bg-brand-primary hover:bg-brand-primary-dark text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer"
           >
             Submit Another Request
           </button>
@@ -169,14 +169,14 @@ export default function RequestQuote() {
                               : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                           }`}
                         >
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${form.serviceType === id ? 'bg-sky-600' : 'bg-slate-100'}`}>
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${form.serviceType === id ? 'bg-brand-primary' : 'bg-slate-100'}`}>
                             <Icon className={`w-5 h-5 ${form.serviceType === id ? 'text-white' : 'text-slate-500'}`} />
                           </div>
                           <div className="flex-1">
                             <div className="font-semibold text-slate-900 text-sm">{label}</div>
                             <div className="text-slate-500 text-xs">{desc}</div>
                           </div>
-                          {form.serviceType === id && <CheckCircle className="w-5 h-5 text-sky-600 shrink-0" />}
+                          {form.serviceType === id && <CheckCircle className="w-5 h-5 text-brand-primary shrink-0" />}
                         </button>
                       ))}
                     </div>
@@ -329,7 +329,7 @@ export default function RequestQuote() {
                     type="button"
                     onClick={() => goTo(step + 1)}
                     disabled={step === 1 ? !canNext1 : !canNext2}
-                    className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-semibold px-6 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer text-sm"
+                    className="inline-flex items-center gap-2 bg-brand-primary hover:bg-brand-primary-dark disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-semibold px-6 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer text-sm"
                   >
                     Next Step <ArrowRight className="w-4 h-4" />
                   </button>
@@ -337,7 +337,7 @@ export default function RequestQuote() {
                   <button
                     type="submit"
                     disabled={!canSubmit}
-                    className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer text-sm"
+                    className="inline-flex items-center gap-2 bg-brand-success hover:bg-brand-success-dark disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer text-sm"
                   >
                     <Sparkles className="w-4 h-4" /> Submit Quote Request
                   </button>
@@ -348,7 +348,7 @@ export default function RequestQuote() {
 
           {/* Trust note */}
           <div className="mt-6 bg-white rounded-2xl border border-slate-200 p-5 flex gap-4 items-start">
-            <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+            <CheckCircle className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-slate-900 text-sm">No commitment required</p>
               <p className="text-slate-500 text-xs mt-0.5">

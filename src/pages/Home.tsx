@@ -68,7 +68,7 @@ function HeroPhoto() {
       <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
         <img
           src="/images/hero.jpg"
-          alt="Cleaning By Kandi professional cleaning a bright Arizona home"
+          alt="Beautifully maintained West Valley Arizona living room — the result of a Cleaning By Kandi visit"
           className="w-full h-full object-cover"
           width={800}
           height={1000}
@@ -78,7 +78,7 @@ function HeroPhoto() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" aria-hidden="true" />
         <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg flex items-center gap-3">
-          <ThumbsUp className="w-5 h-5 text-emerald-500" />
+          <ThumbsUp className="w-5 h-5 text-brand-accent" />
           <div>
             <div className="text-xs text-slate-500 font-medium">Satisfaction Rate</div>
             <div className="font-heading font-bold text-slate-900 text-xl tabular leading-none">100%</div>
@@ -103,7 +103,7 @@ export default function Home() {
               <div className="block lg:hidden mb-6">
                 <img
                   src="/images/hero.jpg"
-                  alt="Cleaning By Kandi professional at work"
+                  alt="Warm, clean Arizona living room — the Cleaning By Kandi result"
                   className="w-20 h-20 rounded-full object-cover ring-4 ring-sky-400/30 shadow-lg"
                   width={80}
                   height={80}
@@ -117,7 +117,7 @@ export default function Home() {
                 transition={{ duration: 0.5, ease: 'easeOut' }}
               >
                 <Shield className="w-3.5 h-3.5" />
-                Serving the West Valley, Arizona
+                Kandi's Team · West Valley, AZ
               </motion.div>
 
               <motion.h1
@@ -126,9 +126,9 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
-                A Spotlessly<br />
-                Clean Home,{' '}
-                <span className="text-sky-400">Guaranteed.</span>
+                West Valley Homes,<br />
+                Cleaned Right.{' '}
+                <span className="text-sky-400">By Kandi.</span>
               </motion.h1>
 
               <motion.p
@@ -137,7 +137,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               >
-                Cleaning By Kandi delivers reliable, detail-obsessed residential and commercial cleaning across Surprise, Peoria, Glendale, and the greater West Valley.
+                Kandi and her team bring genuine care to every home — reliable, detail-obsessed residential and commercial cleaning across Surprise, Peoria, Glendale, and the rest of the West Valley.
               </motion.p>
 
               <motion.div
@@ -148,7 +148,7 @@ export default function Home() {
               >
                 <Link
                   to="/request-quote"
-                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
+                  className="inline-flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-dark text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
                 >
                   Get Your Free Quote
                   <ArrowRight className="w-4 h-4" />
@@ -183,7 +183,7 @@ export default function Home() {
               {trustBadges.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-3 py-2">
                   <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-emerald-600" />
+                    <Icon className="w-5 h-5 text-brand-success" />
                   </div>
                   <span className="text-sm font-semibold text-slate-700">{label}</span>
                 </div>
@@ -194,7 +194,7 @@ export default function Home() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="bg-sky-600">
+      <section className="bg-brand-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <StaggerGrid className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {stats.map(({ value, label }) => (
@@ -211,7 +211,7 @@ export default function Home() {
       <section className="py-16 md:py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">What We Offer</p>
+            <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-2">What We Offer</p>
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
               Cleaning Built Around Your Life<SparkleAccent className="ml-2" />
             </h2>
@@ -224,14 +224,14 @@ export default function Home() {
             {services.map(({ icon: Icon, title, description }, idx) => (
               <StaggerItem key={title} className={idx >= 3 ? 'hidden sm:block' : undefined}>
                 <div className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-sky-300 hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
-                  <div className="w-12 h-12 bg-sky-50 group-hover:bg-sky-600 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300">
-                    <Icon className="w-6 h-6 text-sky-600 group-hover:text-white transition-colors duration-300" />
+                  <div className="w-12 h-12 bg-sky-50 group-hover:bg-brand-primary rounded-xl flex items-center justify-center mb-4 transition-colors duration-300">
+                    <Icon className="w-6 h-6 text-brand-primary group-hover:text-white transition-colors duration-300" />
                   </div>
                   <h3 className="font-heading font-semibold text-slate-900 mb-2">{title}</h3>
                   <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-1">{description}</p>
                   <Link
                     to="/services"
-                    className="inline-flex items-center gap-1 text-sky-600 text-sm font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
+                    className="inline-flex items-center gap-1 text-brand-primary text-sm font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
                   >
                     Learn more <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -241,7 +241,7 @@ export default function Home() {
 
             {/* CTA card */}
             <StaggerItem>
-              <div className="bg-sky-600 rounded-2xl p-6 flex flex-col justify-between h-full">
+              <div className="bg-brand-primary rounded-2xl p-6 flex flex-col justify-between h-full">
                 <div>
                   <h3 className="font-heading font-bold text-white text-xl mb-2">Ready to get started?</h3>
                   <p className="text-sky-100 text-sm leading-relaxed">
@@ -250,7 +250,7 @@ export default function Home() {
                 </div>
                 <Link
                   to="/request-quote"
-                  className="inline-flex items-center gap-2 mt-6 bg-white text-sky-600 font-semibold text-sm px-4 py-2.5 rounded-lg hover:bg-sky-50 transition-colors duration-200 cursor-pointer w-fit"
+                  className="inline-flex items-center gap-2 mt-6 bg-white text-brand-primary font-semibold text-sm px-4 py-2.5 rounded-lg hover:bg-sky-50 transition-colors duration-200 cursor-pointer w-fit"
                 >
                   Request a Quote <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -262,7 +262,7 @@ export default function Home() {
           <div className="mt-6 text-center sm:hidden">
             <Link
               to="/services"
-              className="inline-flex items-center gap-1.5 text-sky-600 font-semibold text-sm hover:underline min-h-[44px]"
+              className="inline-flex items-center gap-1.5 text-brand-primary font-semibold text-sm hover:underline min-h-[44px]"
             >
               See all 5 services <ArrowRight className="w-4 h-4" />
             </Link>
@@ -309,7 +309,7 @@ export default function Home() {
             </FadeIn>
 
             <FadeIn direction="right">
-              <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">Why Choose Us</p>
+              <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-2">Why Choose Us</p>
               <h2 className="text-4xl font-bold text-slate-900 mb-4">
                 Why Families & Businesses Choose Kandi
               </h2>
@@ -325,14 +325,14 @@ export default function Home() {
                   '100% satisfaction guarantee on every clean',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
                     <span className="text-slate-700">{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 mt-8 text-sky-600 font-semibold hover:gap-3 transition-all duration-200 cursor-pointer min-h-[44px]"
+                className="inline-flex items-center gap-2 mt-8 text-brand-primary font-semibold hover:gap-3 transition-all duration-200 cursor-pointer min-h-[44px]"
               >
                 Learn our story <ArrowRight className="w-4 h-4" />
               </Link>
@@ -345,7 +345,7 @@ export default function Home() {
       <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">Reviews</p>
+            <p className="text-brand-primary font-semibold text-sm uppercase tracking-wider mb-2">Reviews</p>
             <h2 className="text-4xl font-bold text-slate-900 mb-4">What Our Clients Are Saying<SparkleAccent className="ml-2" /></h2>
             <p className="text-slate-600">Real reviews from real Arizona families and business owners.</p>
           </FadeIn>
@@ -384,7 +384,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/request-quote"
-              className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
+              className="inline-flex items-center justify-center gap-2 bg-brand-primary-light hover:bg-sky-400 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
             >
               Request a Free Quote <ArrowRight className="w-4 h-4" />
             </Link>

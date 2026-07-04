@@ -91,8 +91,8 @@ const services = [
 ];
 
 const colorMap: Record<string, { badge: string; check: string; bg: string; border: string; number: string }> = {
-  sky:     { badge: 'bg-sky-100 text-sky-700',       check: 'text-sky-600',     bg: 'bg-sky-50',     border: 'border-sky-200',     number: 'text-sky-200' },
-  emerald: { badge: 'bg-emerald-100 text-emerald-700', check: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', number: 'text-emerald-200' },
+  sky:     { badge: 'bg-sky-100 text-sky-700',       check: 'text-brand-primary',     bg: 'bg-sky-50',     border: 'border-sky-200',     number: 'text-sky-200' },
+  emerald: { badge: 'bg-emerald-100 text-emerald-700', check: 'text-brand-success', bg: 'bg-emerald-50', border: 'border-emerald-200', number: 'text-emerald-200' },
   violet:  { badge: 'bg-violet-100 text-violet-700',  check: 'text-violet-600',  bg: 'bg-violet-50',  border: 'border-violet-200',  number: 'text-violet-200' },
   orange:  { badge: 'bg-orange-100 text-orange-700',  check: 'text-orange-600',  bg: 'bg-orange-50',  border: 'border-orange-200',  number: 'text-orange-200' },
   slate:   { badge: 'bg-slate-200 text-slate-700',    check: 'text-slate-600',   bg: 'bg-slate-100',  border: 'border-slate-300',   number: 'text-slate-300' },
@@ -115,7 +115,7 @@ export default function Services() {
             </p>
             <Link
               to="/request-quote"
-              className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer"
+              className="inline-flex items-center gap-2 bg-brand-primary-light hover:bg-sky-400 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer"
             >
               Get a Free Quote <ArrowRight className="w-4 h-4" />
             </Link>
@@ -169,7 +169,7 @@ export default function Services() {
                           className={`hidden lg:flex w-6 h-6 rounded-full border-2 border-slate-200 bg-white items-center justify-center shrink-0 mt-2 z-10`}
                           aria-hidden="true"
                         >
-                          <div className="w-2 h-2 rounded-full bg-sky-600" />
+                          <div className="w-2 h-2 rounded-full bg-brand-primary" />
                         </div>
 
                         <div className="flex-1 grid lg:grid-cols-2 gap-10 items-start">
@@ -183,7 +183,7 @@ export default function Services() {
                             <p className="text-slate-600 leading-relaxed mb-6">{service.description}</p>
                             <Link
                               to="/request-quote"
-                              className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer text-sm"
+                              className="inline-flex items-center gap-2 bg-brand-primary hover:bg-brand-primary-dark text-white font-semibold px-5 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer text-sm"
                             >
                               Book This Service <ArrowRight className="w-4 h-4" />
                             </Link>
@@ -237,7 +237,7 @@ export default function Services() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/request-quote"
-              className="inline-flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-500 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-light text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer"
             >
               Request a Quote <ArrowRight className="w-4 h-4" />
             </Link>

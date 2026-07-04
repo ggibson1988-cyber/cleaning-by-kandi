@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 bg-sky-600 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-brand-primary rounded-lg flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <span className="font-heading font-bold text-white text-lg leading-tight">
@@ -36,14 +36,14 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Website"
-                className="w-9 h-9 bg-slate-800 hover:bg-sky-600 rounded-lg flex items-center justify-center transition-colors duration-200 cursor-pointer"
+                className="w-9 h-9 bg-slate-800 hover:bg-brand-primary rounded-lg flex items-center justify-center transition-colors duration-200 cursor-pointer"
               >
                 <Globe className="w-4 h-4" />
               </a>
               <a
                 href="mailto:cleaningbykandi@yahoo.com"
                 aria-label="Share"
-                className="w-9 h-9 bg-slate-800 hover:bg-sky-600 rounded-lg flex items-center justify-center transition-colors duration-200 cursor-pointer"
+                className="w-9 h-9 bg-slate-800 hover:bg-brand-primary rounded-lg flex items-center justify-center transition-colors duration-200 cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />
               </a>
@@ -113,7 +113,7 @@ export default function Footer() {
             </ul>
             <Link
               to="/request-quote"
-              className="inline-block mt-4 bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors duration-200 cursor-pointer"
+              className="inline-block mt-4 bg-brand-primary hover:bg-brand-primary-dark text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors duration-200 cursor-pointer"
             >
               Get a Free Quote
             </Link>

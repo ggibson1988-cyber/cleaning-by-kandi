@@ -23,6 +23,7 @@ export default {
           bg:             'var(--color-background)',
           fg:             'var(--color-foreground)',
           success:        'var(--color-success)',
+          'success-dark': 'var(--color-success-dark)',
           'success-bg':   'var(--color-success-bg)',
           error:          'var(--color-error)',
           'error-bg':     'var(--color-error-bg)',
