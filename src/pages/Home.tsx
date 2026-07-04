@@ -1,85 +1,54 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
-  Shield,
-  Star,
-  CheckCircle,
-  Phone,
-  ArrowRight,
-  Home as HomeIcon,
-  Layers,
-  MoveRight,
-  Building2,
-  Key,
-  Clock,
-  ThumbsUp,
-  Leaf,
-  Award,
-  ChevronRight,
+  Shield, Star, CheckCircle, Phone, ArrowRight,
+  Home as HomeIcon, Layers, MoveRight, Building2, Key,
+  Clock, ThumbsUp, Leaf, Award,
 } from 'lucide-react';
+import FadeIn from '../components/FadeIn';
+import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
+import WaveDivider from '../components/WaveDivider';
+import BubblePattern from '../components/BubblePattern';
 
+/* ─── Data ───────────────────────────────────────────────── */
 const services = [
-  {
-    icon: HomeIcon,
-    title: 'Residential Cleaning',
-    description: 'Regular scheduled cleaning to keep your home spotless — kitchens, baths, living areas, and more.',
-  },
-  {
-    icon: Layers,
-    title: 'Deep Cleaning',
-    description: 'A thorough top-to-bottom clean, reaching every corner your regular routine misses.',
-  },
-  {
-    icon: Key,
-    title: 'Move-In / Move-Out',
-    description: 'Start fresh or leave a sparkling impression for the next occupants.',
-  },
-  {
-    icon: Building2,
-    title: 'Short-Term Rental',
-    description: 'Fast, reliable turnovers for Airbnb and VRBO hosts — guest-ready every time.',
-  },
-  {
-    icon: MoveRight,
-    title: 'Commercial Cleaning',
-    description: 'Professional cleaning for offices and commercial spaces, done on your schedule.',
-  },
+  { icon: HomeIcon,   title: 'Residential Cleaning',      description: 'Regular scheduled cleaning to keep your home spotless — kitchens, baths, living areas, and more.' },
+  { icon: Layers,     title: 'Deep Cleaning',              description: 'A thorough top-to-bottom clean, reaching every corner your regular routine misses.' },
+  { icon: Key,        title: 'Move-In / Move-Out',         description: 'Start fresh or leave a sparkling impression for the next occupants.' },
+  { icon: Building2,  title: 'Short-Term Rental',          description: 'Fast, reliable turnovers for Airbnb and VRBO hosts — guest-ready every time.' },
+  { icon: MoveRight,  title: 'Commercial Cleaning',        description: 'Professional cleaning for offices and commercial spaces, done on your schedule.' },
 ];
 
 const trustBadges = [
   { icon: Shield, label: 'Fully Insured' },
-  { icon: Award, label: 'Bonded & Vetted' },
-  { icon: Leaf, label: 'Eco-Friendly Products' },
-  { icon: Clock, label: 'On-Time Guarantee' },
+  { icon: Award,  label: 'Bonded & Vetted' },
+  { icon: Leaf,   label: 'Eco-Friendly' },
+  { icon: Clock,  label: 'On-Time Guarantee' },
 ];
 
 const testimonials = [
   {
-    name: 'Sarah M.',
-    location: 'Surprise, AZ',
-    rating: 5,
-    text: "Kandi and her team are absolutely incredible! My house has never looked so clean. They paid attention to every little detail and even cleaned areas I forgot to mention. Highly recommend!",
+    name: 'Sarah M.', location: 'Surprise, AZ', rating: 5,
+    text: 'Kandi and her team are absolutely incredible! My house has never looked so clean. They paid attention to every little detail and even cleaned areas I forgot to mention.',
   },
   {
-    name: 'James T.',
-    location: 'Peoria, AZ',
-    rating: 5,
-    text: "I use Cleaning By Kandi for my Airbnb property. The turnovers are flawless — guests always comment on how clean and fresh everything is. Bookings have improved since I started using them.",
+    name: 'James T.', location: 'Peoria, AZ', rating: 5,
+    text: 'I use Cleaning By Kandi for my Airbnb property. The turnovers are flawless — guests always comment on how clean and fresh everything is. Bookings have improved since I started.',
   },
   {
-    name: 'Linda R.',
-    location: 'Glendale, AZ',
-    rating: 5,
-    text: "After moving out, I was stressed about the deposit. Kandi did a move-out clean and it looked better than when I moved in. Got my full deposit back — worth every penny!",
+    name: 'Linda R.', location: 'Glendale, AZ', rating: 5,
+    text: 'After moving out, Kandi did a move-out clean that looked better than when I moved in. Got my full deposit back — worth every penny!',
   },
 ];
 
 const stats = [
   { value: '500+', label: 'Happy Clients' },
-  { value: '5★', label: 'Average Rating' },
-  { value: '3+', label: 'Years Serving AZ' },
-  { value: '6', label: 'Cities Served' },
+  { value: '5★',   label: 'Average Rating' },
+  { value: '3+',   label: 'Years in AZ' },
+  { value: '6',    label: 'Cities Served' },
 ];
 
+/* ─── Star rating ────────────────────────────────────────── */
 function StarRating({ count }: { count: number }) {
   return (
     <div className="flex gap-0.5" aria-label={`${count} out of 5 stars`}>
@@ -90,154 +59,238 @@ function StarRating({ count }: { count: number }) {
   );
 }
 
+/* ─── Hero photo frame ───────────────────────────────────── */
+function HeroPhoto() {
+  return (
+    <div className="relative hidden lg:block">
+      {/* Offset decorative ring — signature motif */}
+      <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
+      <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
+        <img
+          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=85"
+          alt="Professional cleaner at work in a bright Arizona home"
+          className="w-full h-full object-cover"
+          width={800}
+          height={1000}
+          loading="eager"
+          decoding="async"
+        />
+        {/* Subtle gradient overlay so any overlaid text is readable */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" aria-hidden="true" />
+        {/* Floating badge */}
+        <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg flex items-center gap-3">
+          <ThumbsUp className="w-5 h-5 text-emerald-500" />
+          <div>
+            <div className="text-xs text-slate-500 font-medium">Satisfaction Rate</div>
+            <div className="font-heading font-bold text-slate-900 text-xl tabular leading-none">100%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Page ───────────────────────────────────────────────── */
 export default function Home() {
   return (
     <>
-      {/* Hero */}
+      {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-1/4 w-72 h-72 bg-sky-400 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-emerald-400 rounded-full blur-3xl" />
-        </div>
+        <BubblePattern opacity={0.07} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-sky-600/20 border border-sky-500/30 text-sky-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
-              <Shield className="w-3.5 h-3.5" />
-              Serving the West Valley, Arizona
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              A Spotlessly Clean Home,{' '}
-              <span className="text-sky-400">Guaranteed.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-slate-300 leading-relaxed mb-8 max-w-2xl">
-              Cleaning By Kandi delivers reliable, detail-obsessed residential and commercial cleaning across Surprise, Peoria, Glendale, and the greater West Valley.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                to="/request-quote"
-                className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <motion.div
+                className="inline-flex items-center gap-2 bg-sky-600/20 border border-sky-500/30 text-sky-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6"
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
               >
-                Get Your Free Quote
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href="tel:4803097607"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+                <Shield className="w-3.5 h-3.5" />
+                Serving the West Valley, Arizona
+              </motion.div>
+
+              <motion.h1
+                className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
-                <Phone className="w-4 h-4" />
-                (480) 309-7607
-              </a>
+                A Spotlessly<br />
+                Clean Home,{' '}
+                <span className="text-sky-400">Guaranteed.</span>
+              </motion.h1>
+
+              <motion.p
+                className="text-lg text-slate-300 leading-relaxed mb-8 max-w-xl"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Cleaning By Kandi delivers reliable, detail-obsessed residential and commercial cleaning across Surprise, Peoria, Glendale, and the greater West Valley.
+              </motion.p>
+
+              <motion.div
+                className="flex flex-col sm:flex-row gap-3"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Link
+                  to="/request-quote"
+                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+                >
+                  Get Your Free Quote
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <a
+                  href="tel:4803097607"
+                  className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base"
+                >
+                  <Phone className="w-4 h-4" />
+                  (480) 309-7607
+                </a>
+              </motion.div>
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.75, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <HeroPhoto />
+            </motion.div>
           </div>
         </div>
+        <WaveDivider fill="#FFFFFF" />
       </section>
 
-      {/* Trust Badges */}
+      {/* ── Trust badges ── */}
       <section className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {trustBadges.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-3 py-2">
-                <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0">
-                  <Icon className="w-5 h-5 text-emerald-600" />
+          <FadeIn>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {trustBadges.map(({ icon: Icon, label }) => (
+                <div key={label} className="flex items-center gap-3 py-2">
+                  <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-700">{label}</span>
                 </div>
-                <span className="text-sm font-semibold text-slate-700">{label}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </FadeIn>
         </div>
       </section>
 
-      {/* Stats */}
+      {/* ── Stats ── */}
       <section className="bg-sky-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <StaggerGrid className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {stats.map(({ value, label }) => (
-              <div key={label}>
-                <div className="text-3xl md:text-4xl font-bold font-heading text-white mb-1">{value}</div>
+              <StaggerItem key={label}>
+                <div className="text-4xl font-bold font-heading text-white mb-1 tabular">{value}</div>
                 <div className="text-sky-100 text-sm">{label}</div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGrid>
         </div>
       </section>
 
-      {/* Services */}
+      {/* ── Services ── */}
       <section className="py-16 md:py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Cleaning Services Built Around You
+          <FadeIn className="text-center mb-12">
+            <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">What We Offer</p>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Cleaning Built Around Your Life
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Whether it's weekly upkeep or a one-time deep clean, we have a service to match every need and budget.
             </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          </FadeIn>
+
+          <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map(({ icon: Icon, title, description }) => (
-              <div
-                key={title}
-                className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-sky-300 hover:shadow-lg transition-all duration-300 group"
-              >
-                <div className="w-12 h-12 bg-sky-50 group-hover:bg-sky-600 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300">
-                  <Icon className="w-6 h-6 text-sky-600 group-hover:text-white transition-colors duration-300" />
+              <StaggerItem key={title}>
+                <div className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-sky-300 hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
+                  <div className="w-12 h-12 bg-sky-50 group-hover:bg-sky-600 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300">
+                    <Icon className="w-6 h-6 text-sky-600 group-hover:text-white transition-colors duration-300" />
+                  </div>
+                  <h3 className="font-heading font-semibold text-slate-900 mb-2">{title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-1">{description}</p>
+                  <Link
+                    to="/services"
+                    className="inline-flex items-center gap-1 text-sky-600 text-sm font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
+                  >
+                    Learn more <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
-                <h3 className="font-heading font-semibold text-slate-900 text-lg mb-2">{title}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed mb-4">{description}</p>
+              </StaggerItem>
+            ))}
+
+            {/* CTA card */}
+            <StaggerItem>
+              <div className="bg-sky-600 rounded-2xl p-6 flex flex-col justify-between h-full">
+                <div>
+                  <h3 className="font-heading font-bold text-white text-xl mb-2">Ready to get started?</h3>
+                  <p className="text-sky-100 text-sm leading-relaxed">
+                    Fill out our quick quote form and we'll respond within 24 hours.
+                  </p>
+                </div>
                 <Link
-                  to="/services"
-                  className="inline-flex items-center gap-1 text-sky-600 text-sm font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
+                  to="/request-quote"
+                  className="inline-flex items-center gap-2 mt-6 bg-white text-sky-600 font-semibold text-sm px-4 py-2.5 rounded-lg hover:bg-sky-50 transition-colors duration-200 cursor-pointer w-fit"
                 >
-                  Learn more <ChevronRight className="w-4 h-4" />
+                  Request a Quote <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-            ))}
-            {/* CTA Card */}
-            <div className="bg-sky-600 rounded-2xl p-6 flex flex-col justify-between">
-              <div>
-                <h3 className="font-heading font-bold text-white text-xl mb-2">Ready to get started?</h3>
-                <p className="text-sky-100 text-sm leading-relaxed">
-                  Fill out our quick quote form and we'll get back to you within 24 hours.
-                </p>
-              </div>
-              <Link
-                to="/request-quote"
-                className="inline-flex items-center gap-2 mt-6 bg-white text-sky-600 font-semibold text-sm px-4 py-2.5 rounded-lg hover:bg-sky-50 transition-colors duration-200 cursor-pointer w-fit"
-              >
-                Request a Quote <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
+            </StaggerItem>
+          </StaggerGrid>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-16 md:py-20 bg-white">
+      {/* ── Pull-quote — deliberately sparse section ── */}
+      <section className="bg-white py-16 md:py-24">
+        <FadeIn className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div
+            className="text-sky-500 mb-6 flex justify-center"
+            aria-hidden="true"
+          >
+            <Star className="w-8 h-8 fill-sky-500" />
+          </div>
+          <blockquote className="text-3xl md:text-4xl font-heading font-medium text-slate-900 leading-tight italic mb-8">
+            &ldquo;My house has never looked so clean. They paid attention to every little detail.&rdquo;
+          </blockquote>
+          <p className="text-slate-500 font-medium">— Sarah M., Surprise, AZ</p>
+        </FadeIn>
+      </section>
+
+      {/* ── Why Choose Us ── */}
+      <section className="py-16 md:py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Image placeholder */}
-            <div className="relative">
-              <div className="bg-gradient-to-br from-sky-100 to-emerald-100 rounded-3xl aspect-[4/3] flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-sky-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <HomeIcon className="w-10 h-10 text-sky-600" />
-                  </div>
-                  <p className="text-slate-500 text-sm font-medium">Photo Coming Soon</p>
+            {/* Photo */}
+            <FadeIn direction="left">
+              <div className="relative">
+                <div className="absolute -top-3 -left-3 w-full h-full rounded-3xl border-2 border-emerald-400/40" aria-hidden="true" />
+                <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
+                  <img
+                    src="https://images.unsplash.com/photo-1583397539538-5c8cc95c0ab4?auto=format&fit=crop&w=800&q=85"
+                    alt="Bright, freshly cleaned Arizona living room"
+                    className="w-full h-full object-cover"
+                    width={800}
+                    height={600}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
               </div>
-              <div className="absolute -bottom-4 -right-4 bg-white rounded-2xl shadow-lg p-4 border border-slate-100">
-                <div className="flex items-center gap-2">
-                  <ThumbsUp className="w-5 h-5 text-emerald-500" />
-                  <div>
-                    <div className="text-xs text-slate-500">Customer Satisfaction</div>
-                    <div className="font-bold text-slate-900 text-lg leading-none">100%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </FadeIn>
 
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            <FadeIn direction="right">
+              <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">Why Choose Us</p>
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">
                 Why Families & Businesses Choose Kandi
               </h2>
               <p className="text-slate-600 leading-relaxed mb-8">
@@ -263,44 +316,46 @@ export default function Home() {
               >
                 Learn our story <ArrowRight className="w-4 h-4" />
               </Link>
-            </div>
+            </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16 md:py-20 bg-slate-50">
+      {/* ── Testimonials ── */}
+      <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              What Our Clients Are Saying
-            </h2>
+          <FadeIn className="text-center mb-12">
+            <p className="text-sky-600 font-semibold text-sm uppercase tracking-wider mb-2">Reviews</p>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">What Our Clients Are Saying</h2>
             <p className="text-slate-600">Real reviews from real Arizona families and business owners.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          </FadeIn>
+          <StaggerGrid className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t) => (
-              <div key={t.name} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                <StarRating count={t.rating} />
-                <p className="text-slate-700 leading-relaxed mt-4 mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center font-bold text-sky-700 text-sm font-heading">
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900 text-sm">{t.name}</div>
-                    <div className="text-slate-500 text-xs">{t.location}</div>
+              <StaggerItem key={t.name}>
+                <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 h-full flex flex-col">
+                  <StarRating count={t.rating} />
+                  <p className="text-slate-700 leading-relaxed mt-4 mb-6 text-sm flex-1">&ldquo;{t.text}&rdquo;</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center font-bold text-sky-700 text-sm font-heading shrink-0">
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-slate-900 text-sm">{t.name}</div>
+                      <div className="text-slate-500 text-xs">{t.location}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGrid>
         </div>
       </section>
 
-      {/* CTA Banner */}
-      <section className="bg-gradient-to-r from-slate-900 to-sky-900 py-14">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+      {/* ── CTA banner ── */}
+      <section className="relative overflow-hidden bg-gradient-to-r from-slate-900 to-sky-900 py-14">
+        <BubblePattern opacity={0.05} />
+        <FadeIn className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">
             Ready for a Cleaner, Happier Home?
           </h2>
           <p className="text-slate-300 text-lg mb-8">
@@ -320,7 +375,7 @@ export default function Home() {
               <Phone className="w-4 h-4" /> Call Us Now
             </a>
           </div>
-        </div>
+        </FadeIn>
       </section>
     </>
   );

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Phone, Menu, X, Sparkles } from 'lucide-react';
 
@@ -11,13 +11,38 @@ const navLinks = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  /* Close on Escape; return focus to toggle */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  /* Prevent body scroll while mobile menu is open */
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  const close = () => {
+    setOpen(false);
+    toggleRef.current?.focus();
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group" onClick={() => setOpen(false)}>
+          <Link to="/" className="flex items-center gap-2 group" onClick={close}>
             <div className="w-9 h-9 bg-sky-600 rounded-lg flex items-center justify-center group-hover:bg-sky-700 transition-colors duration-200">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
@@ -27,7 +52,7 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
             {navLinks.map(({ to, label }) => (
               <NavLink
@@ -64,12 +89,14 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile menu toggle */}
+          {/* Hamburger */}
           <button
+            ref={toggleRef}
             className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors duration-200 cursor-pointer"
             onClick={() => setOpen(!open)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -78,19 +105,23 @@ export default function Header() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 pb-4 pt-2">
+        <div
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+          className="md:hidden border-t border-slate-200 bg-white px-4 pb-4 pt-2"
+        >
           <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
             {navLinks.map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
                 end={to === '/'}
-                onClick={() => setOpen(false)}
+                onClick={close}
                 className={({ isActive }) =>
                   `px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer ${
-                    isActive
-                      ? 'bg-sky-50 text-sky-700'
-                      : 'text-slate-700 hover:bg-slate-50'
+                    isActive ? 'bg-sky-50 text-sky-700' : 'text-slate-700 hover:bg-slate-50'
                   }`
                 }
               >
@@ -108,7 +139,7 @@ export default function Header() {
             </a>
             <Link
               to="/request-quote"
-              onClick={() => setOpen(false)}
+              onClick={close}
               className="bg-sky-600 text-white text-sm font-semibold px-4 py-3 rounded-lg text-center transition-colors duration-200 cursor-pointer"
             >
               Get a Free Quote
