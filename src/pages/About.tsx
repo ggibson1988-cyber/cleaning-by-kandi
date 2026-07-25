@@ -76,7 +76,7 @@ export default function About() {
                 <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
                 <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
                   <img
-                    src="/images/about-team.jpg"
+                    src="images/about-team.jpg"
                     alt="Kandi and her professional cleaning team ready for a West Valley home cleaning"
                     className="w-full h-full object-cover"
                     width={800}

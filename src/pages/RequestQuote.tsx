@@ -6,6 +6,12 @@ import {
   User, MapPin, Calendar, MessageSquare, Sparkles,
 } from 'lucide-react';
 
+declare global {
+  interface Window {
+    CBK_GHL_WEBHOOK_URL?: string;
+  }
+}
+
 type ServiceType = 'residential' | 'deep' | 'moveinout' | 'rental' | 'commercial' | '';
 
 interface FormData {
@@ -100,9 +106,12 @@ export default function RequestQuote() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const endpoint: string | undefined = import.meta.env.VITE_FORMSPREE_ENDPOINT;
+    const endpoint: string | undefined =
+      window.CBK_GHL_WEBHOOK_URL ||
+      import.meta.env.VITE_GHL_WEBHOOK_URL ||
+      import.meta.env.VITE_FORMSPREE_ENDPOINT;
     if (!endpoint) {
-      setSubmitError('Form is not configured. Please call us at (480) 309-7607.');
+      setSubmitError('The GoHighLevel quote form is not configured yet. Please call us at (480) 309-7607.');
       return;
     }
     setSubmitting(true);
@@ -112,21 +121,24 @@ export default function RequestQuote() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          _subject: `Quote Request — ${form.firstName} ${form.lastName}`,
-          _replyto: form.email,
-          'Service Type': form.serviceType,
-          Bedrooms: form.bedrooms,
-          Bathrooms: form.bathrooms,
-          'Square Footage': form.sqft || 'Not provided',
-          Frequency: form.frequency,
-          'First Name': form.firstName,
-          'Last Name': form.lastName,
-          Email: form.email,
-          Phone: form.phone,
-          City: form.city,
-          Address: form.address || 'Not provided',
-          'Preferred Date': form.preferredDate || 'Flexible',
-          Notes: form.notes || 'None',
+          source: 'Cleaning By Kandi Website',
+          form_name: 'Cleaning By Kandi Quote Request',
+          subject: `Quote Request — ${form.firstName} ${form.lastName}`,
+          serviceType: form.serviceType,
+          bedrooms: form.bedrooms,
+          bathrooms: form.bathrooms,
+          squareFootage: form.sqft || 'Not provided',
+          frequency: form.frequency,
+          firstName: form.firstName,
+          lastName: form.lastName,
+          name: `${form.firstName} ${form.lastName}`,
+          email: form.email,
+          phone: form.phone,
+          city: form.city,
+          address: form.address || 'Not provided',
+          preferredDate: form.preferredDate || 'Flexible',
+          notes: form.notes || 'None',
+          pageUrl: window.location.href,
         }),
       });
       if (!res.ok) {

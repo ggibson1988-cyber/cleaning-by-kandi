@@ -275,7 +275,7 @@ export default function ServiceAreas() {
       {/* ── Arizona photo band ── */}
       <section className="relative overflow-hidden h-48 md:h-64">
         <img
-          src="/images/arizona.jpg"
+          src="images/arizona.jpg"
           alt="Sonoran Desert landscape in the West Valley Arizona region — the communities Cleaning By Kandi serves"
           className="absolute inset-0 w-full h-full object-cover"
           width={1200}
