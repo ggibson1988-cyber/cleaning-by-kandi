@@ -6,6 +6,7 @@ import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 import Seo from '../components/Seo';
 import Breadcrumbs from '../components/Breadcrumbs';
+import ResponsiveImage from '../components/ResponsiveImage';
 
 const cities = [
   { name: 'Peoria',   description: 'Our home base! Proudly serving Lake Pleasant, Vistancia, and all Peoria neighborhoods.',           zip: ['85345', '85380', '85381', '85382', '85383'], highlight: true  },
@@ -278,14 +279,14 @@ export default function ServiceAreas() {
 
       {/* ── Arizona photo band ── */}
       <section className="relative overflow-hidden h-48 md:h-64">
-        <img
-          src="/images/arizona.jpg"
+        <ResponsiveImage
+          base="/images/arizona"
           alt="Sonoran Desert landscape in the West Valley Arizona region — the communities Cleaning By Kandi serves"
           className="absolute inset-0 w-full h-full object-cover"
+          widths={[400, 800, 1200]}
           width={1200}
           height={600}
-          loading="lazy"
-          decoding="async"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/75 to-sky-900/50 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

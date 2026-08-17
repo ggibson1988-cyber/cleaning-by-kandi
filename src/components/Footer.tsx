@@ -121,14 +121,14 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             &copy; {new Date().getFullYear()} Cleaning By Kandi. All rights reserved.
           </p>
           <div className="flex gap-4">
-            <Link to="/privacy" className="text-xs text-slate-500 hover:text-slate-300 transition-colors duration-200 cursor-pointer">
+            <Link to="/privacy" className="text-xs text-slate-400 hover:text-slate-300 transition-colors duration-200 cursor-pointer">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="text-xs text-slate-500 hover:text-slate-300 transition-colors duration-200 cursor-pointer">
+            <Link to="/terms" className="text-xs text-slate-400 hover:text-slate-300 transition-colors duration-200 cursor-pointer">
               Terms of Service
             </Link>
           </div>

@@ -4,9 +4,9 @@
 
 /* ─── Semantic design tokens ─────────────────────────────── */
 :root {
-  --color-primary:       #0284C7;
-  --color-primary-dark:  #0369A1;
-  --color-primary-light: #0EA5E9;
+  --color-primary:       #0369A1;   /* was primary-dark; #0284C7 on white is 4.09:1, fails AA */
+  --color-primary-dark:  #075985;   /* new hover/active shade, one step darker */
+  --color-primary-light: #0EA5E9;   /* kept for large decorative surfaces/borders only — never text or small-button backgrounds */
   --color-accent:        #10B981;
   --color-accent-light:  #34D399;
   --color-navy:          #0F172A;
@@ -66,6 +66,26 @@
     outline: 3px solid var(--color-primary);
     outline-offset: 3px;
     border-radius: 4px;
+  }
+
+  /* Skip link: hidden off-screen until keyboard-focused */
+  .skip-link {
+    position: absolute;
+    top: -3rem;
+    left: 0.5rem;
+    z-index: 100;
+    background: var(--color-primary);
+    color: #FFFFFF;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: top 0.15s ease-out;
+  }
+
+  .skip-link:focus {
+    top: 0.5rem;
   }
 }
 
