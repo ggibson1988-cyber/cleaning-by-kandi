@@ -205,7 +205,7 @@ export default function Home() {
                     to="/services"
                     className="inline-flex items-center gap-1 text-brand-primary text-sm font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
                   >
-                    Learn more <ArrowRight className="w-4 h-4" />
+                    Learn more <span className="sr-only">about {title}</span> <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </StaggerItem>

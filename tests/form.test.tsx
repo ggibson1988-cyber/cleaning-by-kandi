@@ -90,6 +90,32 @@ describe('RequestQuote form', () => {
     await waitFor(() => expect(screen.getByText(/network|try again|call us/i)).toBeInTheDocument());
   });
 
+  it('sends the consent-capture contract fields in the request body', async () => {
+    (fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(new Response(JSON.stringify({ success: true }), { status: 200 }));
+    const user = userEvent.setup();
+    render(<MemoryRouter><RequestQuote /></MemoryRouter>);
+    await fillThroughStep3(user);
+    await user.click(screen.getByRole('button', { name: /submit quote request/i }));
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+
+    const [, requestInit] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+    const body = JSON.parse(requestInit.body as string);
+
+    // consentVersion: present and non-empty, but not hardcoded to a specific
+    // string — the actual version value is expected to change over time.
+    expect(typeof body.consentVersion).toBe('string');
+    expect(body.consentVersion.length).toBeGreaterThan(0);
+
+    // consentTimestamp: real ISO-8601 shape.
+    expect(new Date(body.consentTimestamp).toISOString()).toBe(body.consentTimestamp);
+
+    // fillThroughStep3 never interacts with the SMS consent checkboxes, so
+    // both consent-text fields should reflect the default unchecked state —
+    // gated to empty strings, not the underlying consent copy.
+    expect(body.consentTextTransactional).toBe('');
+    expect(body.consentTextMarketing).toBe('');
+  });
+
   it('disables the submit button while a submission is in flight (duplicate-submit guard)', async () => {
     let resolveFetch: (v: Response) => void = () => {};
     (fetch as ReturnType<typeof vi.fn>).mockReturnValueOnce(new Promise((resolve) => { resolveFetch = resolve; }));

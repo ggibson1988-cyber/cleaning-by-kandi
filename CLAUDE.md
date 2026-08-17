@@ -1,3 +1,16 @@
+> **Superseded 2026-08-16.** The instructions below described rebuilding
+> this site natively inside GoHighLevel's page builder. That direction has
+> been replaced: the approved architecture is a directly-hosted, prerendered
+> frontend (this React/Vite app) on Cloudflare, with GoHighLevel retained
+> only as the CRM/workflow backend behind the quote form's API — GHL is no
+> longer the public page shell. See `docs/ARCHITECTURE.md` for the current
+> decision record and rationale. The business facts and service list below
+> are still accurate and still the source of truth; the "Rebuild natively
+> in GHL" instructions and GHL-build-sheet output format are historical —
+> kept for reference, not to be followed for new work.
+
+---
+
 # Claude Instructions — Cleaning By Kandi
 
 This repo contains a React/Vite website for Cleaning By Kandi, LLC.

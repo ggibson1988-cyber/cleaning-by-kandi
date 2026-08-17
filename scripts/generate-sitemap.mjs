@@ -4,9 +4,8 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const { ROUTES } = await import(resolve(root, 'dist-ssr/entry-server.js'));
+const { ROUTES, SITE_URL } = await import(resolve(root, 'dist-ssr/entry-server.js'));
 
-const SITE_URL = 'https://cleaningbykandi.com';
 const PRIORITY = {
   '/': '1.0',
   '/services': '0.9',

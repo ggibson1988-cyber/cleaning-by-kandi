@@ -7,7 +7,7 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const distDir = resolve(root, 'dist');
 
 const template = await readFile(resolve(distDir, 'index.html'), 'utf-8');
-const { render, ROUTES } = await import(resolve(root, 'dist-ssr/entry-server.js'));
+const { render, ROUTES, SITE_URL } = await import(resolve(root, 'dist-ssr/entry-server.js'));
 
 function escapeHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -43,8 +43,6 @@ async function writeRoute(outDir, headHtml, bodyHtml) {
   console.log(`  wrote ${outDir === '' ? '/' : `/${outDir}/`}index.html`);
 }
 
-const SITE_URL = 'https://cleaningbykandi.com';
-
 console.log('Prerendering routes...');
 for (const route of ROUTES) {
   const bodyHtml = render(route.path);
@@ -53,7 +51,7 @@ for (const route of ROUTES) {
 }
 
 // 404 page: real content, robots noindex baked into the head, no canonical
-// (a 404 has no canonical URL), status handled by hosting config (Task 16).
+// (a 404 has no canonical URL), status handled by hosting config (Task 13).
 const notFoundBody = render('/this-path-does-not-exist-9f3a2b');
 const notFoundHead = `
     <title>Page Not Found | Cleaning By Kandi</title>

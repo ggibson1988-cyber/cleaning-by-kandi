@@ -6,8 +6,7 @@ import * as cheerio from 'cheerio';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const distDir = resolve(root, 'dist');
-const { ROUTES } = await import(resolve(root, 'dist-ssr/entry-server.js'));
-const SITE_URL = 'https://cleaningbykandi.com';
+const { ROUTES, SITE_URL } = await import(resolve(root, 'dist-ssr/entry-server.js'));
 
 const failures = [];
 const fail = (msg) => failures.push(msg);
@@ -41,6 +40,12 @@ for (const route of ROUTES) {
 
   if (h1s.length === 0) fail(`${route.path}: no <h1> found`);
   else if (h1s.length > 1) fail(`${route.path}: ${h1s.length} <h1> elements found, expected exactly 1`);
+  else {
+    const h1Text = h1s.first().text();
+    if (h1Text !== route.h1) {
+      fail(`${route.path}: h1 text mismatch — got "${h1Text}", expected "${route.h1}"`);
+    }
+  }
 
   for (const [label, url] of [['og:image', ogImage], ['twitter:image', twitterImage]]) {
     if (!url) fail(`${route.path}: missing ${label}`);

@@ -8,7 +8,7 @@
 export const config = { runtime: 'edge' };
 
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://cleaningbykandi.com',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
@@ -52,7 +52,7 @@ export default async function handler(req: Request): Promise<Response> {
     { key: 'cleaning_frequency', field_value: str(data.frequency) },
     { key: 'preferred_date', field_value: str(data.preferredDate) || 'Flexible' },
     { key: 'job_description', field_value: str(data.notes) },
-    { key: 'sms_transactional_constent', field_value: smsTransactionalConsent ? 'true' : 'false' },
+    { key: 'sms_transactional_consent', field_value: smsTransactionalConsent ? 'true' : 'false' },
     { key: 'sms_marketing_consent', field_value: smsMarketingConsent ? 'true' : 'false' },
     { key: 'consent_version', field_value: str(data.consentVersion) },
     { key: 'consent_url', field_value: str(data.consentUrl) },
@@ -92,7 +92,13 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (!ghlRes.ok) {
     const text = await ghlRes.text().catch(() => '');
-    return new Response(JSON.stringify({ error: `GHL ${ghlRes.status}: ${text}` }), { status: 500, headers: CORS });
+    // Log the upstream error detail server-side only — never return it to the
+    // client, which could leak internal GHL error detail to an untrusted caller.
+    console.error(`GHL upsert failed: ${ghlRes.status} ${text}`);
+    return new Response(
+      JSON.stringify({ error: 'Unable to submit at this time. Please try again or call us.' }),
+      { status: 500, headers: CORS }
+    );
   }
 
   return new Response(JSON.stringify({ success: true }), { status: 200, headers: CORS });
