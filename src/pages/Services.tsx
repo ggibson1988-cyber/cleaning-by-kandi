@@ -7,6 +7,7 @@ import FadeIn from '../components/FadeIn';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 const services = [
   {
@@ -102,6 +103,7 @@ export default function Services() {
   return (
     <>
       <Seo path="/services" />
+      <Breadcrumbs items={[{ label: 'Services', path: '/services' }]} />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />

@@ -5,6 +5,7 @@ import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 const cities = [
   { name: 'Peoria',   description: 'Our home base! Proudly serving Lake Pleasant, Vistancia, and all Peoria neighborhoods.',           zip: ['85345', '85380', '85381', '85382', '85383'], highlight: true  },
@@ -190,6 +191,7 @@ export default function ServiceAreas() {
   return (
     <>
       <Seo path="/service-areas" />
+      <Breadcrumbs items={[{ label: 'Service Areas', path: '/service-areas' }]} />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />

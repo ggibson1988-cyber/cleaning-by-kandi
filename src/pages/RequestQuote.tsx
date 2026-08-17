@@ -7,9 +7,11 @@ import {
   User, MapPin, Calendar, MessageSquare, Sparkles,
 } from 'lucide-react';
 import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { CONSENT_VERSION, TRANSACTIONAL_CONSENT_TEXT, MARKETING_CONSENT_TEXT } from '../lib/consent';
 
 const QUOTE_SEO = <Seo path="/request-quote" />;
+const QUOTE_BREADCRUMBS = <Breadcrumbs items={[{ label: 'Request a Quote', path: '/request-quote' }]} />;
 
 type ServiceType = 'residential' | 'deep' | 'moveinout' | 'rental' | 'commercial' | '';
 
@@ -184,6 +186,7 @@ export default function RequestQuote() {
   return (
     <>
       {QUOTE_SEO}
+      {QUOTE_BREADCRUMBS}
       {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 to-sky-900 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

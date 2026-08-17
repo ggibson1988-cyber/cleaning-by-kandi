@@ -9,6 +9,7 @@ import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 import SparkleAccent from '../components/SparkleAccent';
 import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 const values = [
   { icon: Shield, title: 'Reliability',         description: 'When you book with Cleaning By Kandi, you can count on us to show up on time, every time. Your schedule is precious — we treat it that way.' },
@@ -27,6 +28,7 @@ export default function About() {
   return (
     <>
       <Seo path="/about" />
+      <Breadcrumbs items={[{ label: 'About', path: '/about' }]} />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />

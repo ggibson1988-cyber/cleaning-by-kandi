@@ -1,9 +1,11 @@
 import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 export default function Privacy() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <Seo path="/privacy" />
+      <Breadcrumbs items={[{ label: 'Privacy Policy', path: '/privacy' }]} />
       <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Privacy Policy</h1>
       <p className="text-slate-500 text-sm mb-10">Last updated: August 9, 2026</p>
 
