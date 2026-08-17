@@ -1,0 +1,92 @@
+export const config = { runtime: 'edge' };
+
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export default async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS });
+  }
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: CORS });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const env = (globalThis as any).process?.env as Record<string, string | undefined> | undefined;
+  const apiKey = env?.GHL_API_KEY;
+  const locationId = env?.GHL_LOCATION_ID;
+  if (!apiKey || !locationId) {
+    return new Response(JSON.stringify({ error: 'Server misconfiguration' }), { status: 500, headers: CORS });
+  }
+
+  let data: Record<string, string | boolean>;
+  try {
+    data = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: CORS });
+  }
+
+  const str = (v: unknown) => (typeof v === 'string' ? v : '');
+  const smsTransactionalConsent = data.smsTransactionalConsent === true;
+  const smsMarketingConsent = data.smsMarketingConsent === true;
+
+  // Captured server-side, not trusted from the client.
+  const consentIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
+  const consentUserAgent = req.headers.get('user-agent') || '';
+
+  const customFields = [
+    { key: 'service_type', field_value: str(data.serviceType) },
+    { key: 'bedrooms', field_value: str(data.bedrooms) },
+    { key: 'bathrooms', field_value: str(data.bathrooms) },
+    { key: 'square_footage', field_value: str(data.sqft) },
+    { key: 'cleaning_frequency', field_value: str(data.frequency) },
+    { key: 'preferred_date', field_value: str(data.preferredDate) || 'Flexible' },
+    { key: 'job_description', field_value: str(data.notes) },
+    { key: 'sms_transactional_constent', field_value: smsTransactionalConsent ? 'true' : 'false' },
+    { key: 'sms_marketing_consent', field_value: smsMarketingConsent ? 'true' : 'false' },
+    { key: 'consent_version', field_value: str(data.consentVersion) },
+    { key: 'consent_url', field_value: str(data.consentUrl) },
+    { key: 'consent_timestamp', field_value: str(data.consentTimestamp) },
+    { key: 'consent_ip', field_value: consentIp },
+    { key: 'consent_user_agent', field_value: consentUserAgent },
+    { key: 'consent_text__transactional', field_value: str(data.consentTextTransactional) },
+    { key: 'consent_text__marketing', field_value: str(data.consentTextMarketing) },
+  ];
+
+  const tags = ['Website Quote Request', `Service: ${str(data.serviceType) || 'unknown'}`];
+  if (smsTransactionalConsent) tags.push('sms-transactional-ok');
+  if (smsMarketingConsent) tags.push('sms-marketing-ok');
+
+  const contact = {
+    locationId,
+    firstName: str(data.firstName),
+    lastName: str(data.lastName),
+    email: str(data.email),
+    phone: str(data.phone),
+    address1: str(data.address),
+    city: str(data.city),
+    tags,
+    source: 'public api',
+    customFields,
+  };
+
+  const ghlRes = await fetch('https://services.leadconnectorhq.com/contacts/upsert', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'Version': '2021-07-28',
+    },
+    body: JSON.stringify(contact),
+  });
+
+  if (!ghlRes.ok) {
+    const text = await ghlRes.text().catch(() => '');
+    return new Response(JSON.stringify({ error: `GHL ${ghlRes.status}: ${text}` }), { status: 500, headers: CORS });
+  }
+
+  return new Response(JSON.stringify({ success: true }), { status: 200, headers: CORS });
+}

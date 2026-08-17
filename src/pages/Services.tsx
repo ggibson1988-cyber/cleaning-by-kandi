@@ -6,6 +6,7 @@ import {
 import FadeIn from '../components/FadeIn';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
+import Seo from '../components/Seo';
 
 const services = [
   {
@@ -13,7 +14,7 @@ const services = [
     title: 'Residential Cleaning',
     tagline: 'Consistent, reliable home cleaning on your schedule.',
     description: 'Our residential cleaning service is designed to keep your home fresh and tidy week after week. Whether you need weekly, bi-weekly, or monthly visits, we\'ll customize a plan that fits your home and lifestyle.',
-    photo: 'images/residential.jpg',
+    photo: 'https://cleaning-by-kandi.vercel.app/images/residential.jpg',
     photoAlt: 'Professional cleaning supplies and tools ready for a residential home cleaning in Arizona',
     includes: [
       'Kitchen cleaning (counters, stovetop, sink, exterior of appliances)',
@@ -29,7 +30,7 @@ const services = [
     title: 'Deep Cleaning',
     tagline: 'A thorough, top-to-bottom clean for every corner of your home.',
     description: 'Perfect for first-time clients, spring cleaning, or when your home needs extra attention. Our deep cleaning service reaches places that regular cleaning misses — leaving your home truly spotless.',
-    photo: 'images/deep-clean.jpg',
+    photo: 'https://cleaning-by-kandi.vercel.app/images/deep-clean.jpg',
     photoAlt: 'Sparkling clean kitchen after a deep cleaning service — every surface and appliance addressed',
     includes: [
       'Interior oven and refrigerator cleaning',
@@ -44,7 +45,7 @@ const services = [
     title: 'Move-In / Move-Out Cleaning',
     tagline: 'Start fresh — or leave a great impression behind.',
     description: 'Moving is stressful enough. Let us handle the cleaning so you can focus on everything else. Our move-in/move-out service ensures properties are immaculate for new occupants — and helps renters recover security deposits.',
-    photo: 'images/move-out.jpg',
+    photo: 'https://cleaning-by-kandi.vercel.app/images/move-out.jpg',
     photoAlt: 'Immaculately cleaned empty room ready for new tenants after a move-out cleaning',
     includes: [
       'Full deep clean of entire property',
@@ -60,7 +61,7 @@ const services = [
     title: 'Short-Term Rental Cleaning',
     tagline: 'Guest-ready turnovers for Airbnb, VRBO, and more.',
     description: 'First impressions make all the difference in short-term rentals. We specialize in fast, reliable turnovers that get your property guest-ready between bookings — helping you earn better reviews and more bookings.',
-    photo: 'images/rental.jpg',
+    photo: 'https://cleaning-by-kandi.vercel.app/images/rental.jpg',
     photoAlt: 'Guest-ready bedroom prepared for short-term rental guests — fresh linens and spotless surfaces',
     includes: [
       'Full clean of all rooms and bathrooms',
@@ -76,7 +77,7 @@ const services = [
     title: 'Commercial Cleaning',
     tagline: 'Professional cleaning for offices and commercial spaces.',
     description: 'A clean workspace boosts morale, impresses clients, and promotes employee health. Cleaning By Kandi offers professional commercial cleaning services tailored to your business hours and specific needs.',
-    photo: 'images/commercial.jpg',
+    photo: 'https://cleaning-by-kandi.vercel.app/images/commercial.jpg',
     photoAlt: 'Clean, professional office space after commercial cleaning service — desks and floors spotless',
     includes: [
       'General office cleaning and sanitizing',
@@ -100,6 +101,11 @@ const colorMap: Record<string, { badge: string; check: string; bg: string; borde
 export default function Services() {
   return (
     <>
+      <Seo
+        path="/services"
+        title="Cleaning Services in the West Valley, AZ | Residential, Deep & Commercial"
+        description="Explore Cleaning By Kandi's services: residential, deep, move-in/move-out, short-term rental, and commercial cleaning across Surprise and the West Valley of Arizona."
+      />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />

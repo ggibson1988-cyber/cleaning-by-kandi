@@ -4,6 +4,7 @@ import FadeIn from '../components/FadeIn';
 import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
+import Seo from '../components/Seo';
 
 const cities = [
   { name: 'Peoria',   description: 'Our home base! Proudly serving Lake Pleasant, Vistancia, and all Peoria neighborhoods.',           zip: ['85345', '85380', '85381', '85382', '85383'], highlight: true  },
@@ -188,6 +189,11 @@ const ArizonaMap = () => {
 export default function ServiceAreas() {
   return (
     <>
+      <Seo
+        path="/service-areas"
+        title="Service Areas | House Cleaning in Surprise, Peoria & Glendale, AZ"
+        description="Cleaning By Kandi serves Surprise, Peoria, Glendale, Sun City, Goodyear, and Buckeye. See if your West Valley, Arizona neighborhood is in our cleaning service area."
+      />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />
@@ -275,7 +281,7 @@ export default function ServiceAreas() {
       {/* ── Arizona photo band ── */}
       <section className="relative overflow-hidden h-48 md:h-64">
         <img
-          src="images/arizona.jpg"
+          src="https://cleaning-by-kandi.vercel.app/images/arizona.jpg"
           alt="Sonoran Desert landscape in the West Valley Arizona region — the communities Cleaning By Kandi serves"
           className="absolute inset-0 w-full h-full object-cover"
           width={1200}

@@ -1,8 +1,16 @@
+import { Link } from 'react-router-dom';
+import Seo from '../components/Seo';
+
 export default function Terms() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <Seo
+        path="/terms"
+        title="Terms of Service | Cleaning By Kandi"
+        description="The terms and conditions governing use of the Cleaning By Kandi website and cleaning services in the West Valley, Arizona."
+      />
       <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Terms of Service</h1>
-      <p className="text-slate-500 text-sm mb-10">Last updated: July 3, 2026</p>
+      <p className="text-slate-500 text-sm mb-10">Last updated: August 9, 2026</p>
 
       <div className="space-y-8">
         <section>
@@ -82,28 +90,54 @@ export default function Terms() {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-slate-900 mb-3">9. Limitation of Liability</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-3">9. SMS / Text Messaging Program Terms</h2>
+          <p className="text-slate-600 leading-relaxed mb-3">
+            By submitting your mobile phone number and checking the applicable consent box on our website, you agree to receive text messages from Cleaning By Kandi as described below.
+          </p>
+          <ul className="space-y-2 mb-3">
+            {[
+              <><strong>Transactional messages</strong> — related to a quote request, appointment, or service you have requested (e.g., scheduling confirmations, reminders).</>,
+              <><strong>Marketing messages</strong> — promotional offers, discounts, and service updates, sent only if you separately opt in.</>,
+              'Message frequency varies. Message and data rates may apply.',
+              <>Reply <strong>STOP</strong> at any time to cancel. Reply <strong>HELP</strong> for assistance. After opting out, you may rejoin by submitting our website form again and providing SMS consent.</>,
+              'Supported carriers are not liable for delayed or undelivered messages.',
+              'Consent to receive text messages is not required as a condition of purchasing any service, and you may opt out at any time without affecting your ability to request or receive services from us.',
+            ].map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-slate-600 text-sm">
+                <span className="w-1.5 h-1.5 bg-brand-primary-light rounded-full shrink-0 mt-2" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-slate-600 leading-relaxed">
+            For details on how we handle information collected through our SMS program, see our{' '}
+            <Link to="/privacy" className="text-brand-primary hover:underline cursor-pointer">Privacy Policy</Link>.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold text-slate-900 mb-3">10. Limitation of Liability</h2>
           <p className="text-slate-600 leading-relaxed">
             To the fullest extent permitted by law, Cleaning By Kandi shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our services or website. Our total liability shall not exceed the amount paid for the specific service in question.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-slate-900 mb-3">10. Governing Law</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-3">11. Governing Law</h2>
           <p className="text-slate-600 leading-relaxed">
             These Terms of Service are governed by the laws of the State of Arizona, without regard to its conflict of law provisions. Any disputes shall be resolved in the courts of Maricopa County, Arizona.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-slate-900 mb-3">11. Changes to These Terms</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-3">12. Changes to These Terms</h2>
           <p className="text-slate-600 leading-relaxed">
             We reserve the right to modify these Terms at any time. Changes will be effective upon posting to our website. Your continued use of our services after any changes constitutes acceptance of the new terms.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-slate-900 mb-3">12. Contact</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-3">13. Contact</h2>
           <p className="text-slate-600 leading-relaxed">
             If you have questions about these Terms of Service, please contact us:
           </p>

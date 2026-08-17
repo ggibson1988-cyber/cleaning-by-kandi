@@ -10,6 +10,7 @@ import ServiceAreas from './pages/ServiceAreas';
 import RequestQuote from './pages/RequestQuote';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import BusinessSchema from './components/BusinessSchema';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -56,6 +57,7 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <HashRouter>
+      <BusinessSchema />
       <div className="flex flex-col min-h-screen">
         <Header />
         <ScrollToTop />

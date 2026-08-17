@@ -8,6 +8,7 @@ import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 import SparkleAccent from '../components/SparkleAccent';
+import Seo from '../components/Seo';
 
 const values = [
   { icon: Shield, title: 'Reliability',         description: 'When you book with Cleaning By Kandi, you can count on us to show up on time, every time. Your schedule is precious — we treat it that way.' },
@@ -25,6 +26,11 @@ const milestones = [
 export default function About() {
   return (
     <>
+      <Seo
+        path="/about"
+        title="About Cleaning By Kandi | Locally Owned Cleaning Team, West Valley AZ"
+        description="Meet Kandi and the team behind Cleaning By Kandi — a locally owned, fully insured cleaning service trusted by families and businesses across Arizona's West Valley."
+      />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />
@@ -76,7 +82,7 @@ export default function About() {
                 <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
                 <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
                   <img
-                    src="images/about-team.jpg"
+                    src="https://cleaning-by-kandi.vercel.app/images/about-team.jpg"
                     alt="Kandi and her professional cleaning team ready for a West Valley home cleaning"
                     className="w-full h-full object-cover"
                     width={800}
