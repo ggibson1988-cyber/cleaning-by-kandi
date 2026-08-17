@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import BusinessSchema from './components/BusinessSchema';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -10,7 +11,7 @@ import ServiceAreas from './pages/ServiceAreas';
 import RequestQuote from './pages/RequestQuote';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
-import BusinessSchema from './components/BusinessSchema';
+import NotFound from './pages/NotFound';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -38,16 +39,7 @@ function AnimatedRoutes() {
           <Route path="/request-quote" element={<RequestQuote />} />
           <Route path="/privacy"       element={<Privacy />} />
           <Route path="/terms"         element={<Terms />} />
-          <Route path="*" element={
-            <div className="flex-1 flex flex-col items-center justify-center py-24 text-center px-4">
-              <p className="text-8xl font-bold text-slate-200 mb-4">404</p>
-              <h1 className="text-2xl font-bold text-slate-900 mb-3">Page Not Found</h1>
-              <p className="text-slate-500 mb-8">The page you're looking for doesn't exist.</p>
-              <Link to="/" className="bg-brand-primary hover:bg-brand-primary-dark text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer">
-                Back to Home
-              </Link>
-            </div>
-          } />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
@@ -56,14 +48,15 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <HashRouter>
+    <div className="flex flex-col min-h-screen">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <BusinessSchema />
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <ScrollToTop />
+      <Header />
+      <ScrollToTop />
+      <main id="main-content" className="flex-1 flex flex-col">
         <AnimatedRoutes />
-        <Footer />
-      </div>
-    </HashRouter>
+      </main>
+      <Footer />
+    </div>
   );
 }

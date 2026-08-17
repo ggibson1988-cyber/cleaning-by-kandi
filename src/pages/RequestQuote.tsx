@@ -9,13 +9,7 @@ import {
 import Seo from '../components/Seo';
 import { CONSENT_VERSION, TRANSACTIONAL_CONSENT_TEXT, MARKETING_CONSENT_TEXT } from '../lib/consent';
 
-const QUOTE_SEO = (
-  <Seo
-    path="/request-quote"
-    title="Request a Free Cleaning Quote | Cleaning By Kandi, Surprise AZ"
-    description="Get a free, no-obligation cleaning quote from Cleaning By Kandi. Tell us about your home or business and we'll respond within 24 hours. Serving the West Valley, AZ."
-  />
-);
+const QUOTE_SEO = <Seo path="/request-quote" />;
 
 type ServiceType = 'residential' | 'deep' | 'moveinout' | 'rental' | 'commercial' | '';
 

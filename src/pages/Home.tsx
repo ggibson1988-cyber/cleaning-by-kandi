@@ -50,7 +50,7 @@ function HeroPhoto() {
       <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
       <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
         <img
-          src="https://cleaning-by-kandi.vercel.app/images/hero.jpg"
+          src="/images/hero.jpg"
           alt="Beautifully maintained West Valley Arizona living room — the result of a Cleaning By Kandi visit"
           className="w-full h-full object-cover"
           width={800}
@@ -76,11 +76,7 @@ function HeroPhoto() {
 export default function Home() {
   return (
     <>
-      <Seo
-        path="/"
-        title="House Cleaning in Surprise & the West Valley, AZ | Cleaning By Kandi"
-        description="Reliable, detail-obsessed residential and commercial cleaning across Surprise, Peoria, Glendale & the West Valley. Fully insured, locally owned. Get a free quote."
-      />
+      <Seo path="/" />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900">
         <BubblePattern opacity={0.07} />
@@ -90,7 +86,7 @@ export default function Home() {
               {/* Mobile-only: circular hero photo medallion */}
               <div className="block lg:hidden mb-6">
                 <img
-                  src="https://cleaning-by-kandi.vercel.app/images/hero.jpg"
+                  src="/images/hero.jpg"
                   alt="Warm, clean Arizona living room — the Cleaning By Kandi result"
                   className="w-20 h-20 rounded-full object-cover ring-4 ring-sky-400/30 shadow-lg"
                   width={80}
@@ -270,7 +266,7 @@ export default function Home() {
                 <div className="absolute -top-3 -left-3 w-full h-full rounded-3xl border-2 border-emerald-400/40" aria-hidden="true" />
                 <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
                   <img
-                    src="https://cleaning-by-kandi.vercel.app/images/clean-home.jpg"
+                    src="/images/clean-home.jpg"
                     alt="Bright, freshly cleaned Arizona living room interior"
                     className="w-full h-full object-cover"
                     width={800}

@@ -1,59 +1,35 @@
-import { SITE_URL } from './Seo';
+import { BUSINESS, SERVICES, SERVICE_AREAS, SITE_URL } from '../lib/business';
+import { canonicalImage } from '../lib/seoImage';
 
 /**
- * LocalBusiness structured data (JSON-LD) for Cleaning By Kandi.
+ * LocalBusiness JSON-LD, mounted once at the app root so it's present on
+ * every prerendered route.
  *
- * Rendered globally so it is present in <head> on every route (only the root
- * route is indexed under the current hash-routing setup, so a global mount
- * guarantees Google sees it when it renders cleaningbykandi.com).
- *
- * Deliberately omitted:
- *  - aggregateRating / review: Google disallows self-serving review markup on
- *    LocalBusiness/Organization; real reviews belong on the Google Business
- *    Profile. Add here only if pulling verified third-party reviews.
- *  - openingHoursSpecification: hours are unknown — fabricating them is worse
- *    than omitting. Add once Kandi confirms real hours.
+ * Deliberately omitted (see plan docs/ARCHITECTURE.md for rationale):
+ *  - aggregateRating/review: no real third-party review data available.
+ *  - geo coordinates: not verified against the actual business location.
+ *  - openingHoursSpecification: hours are unconfirmed.
+ *  - street address: service-area business, no public storefront.
+ *  - "Organization Services" / "Eco-Friendly Cleaning": listed in CLAUDE.md
+ *    but not shown on any visible page — owner confirmation required before
+ *    they can appear in public metadata (see docs/ARCHITECTURE.md).
  */
-
-const SERVICES = [
-  'Residential Cleaning',
-  'Deep Cleaning',
-  'Move-In / Move-Out Cleaning',
-  'Short-Term Rental / Airbnb Cleaning',
-  'Commercial Cleaning',
-  'Organization Services',
-  'Eco-Friendly Cleaning',
-];
-
-const AREAS = ['Surprise', 'Peoria', 'Glendale', 'Sun City', 'Goodyear', 'Buckeye'];
-
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   '@id': `${SITE_URL}/#business`,
-  name: 'Cleaning By Kandi, LLC',
-  description:
-    'Locally owned residential and commercial cleaning serving Surprise and the greater West Valley of Arizona — residential, deep, move-in/move-out, short-term rental, and commercial cleaning.',
+  name: BUSINESS.legalName,
   url: `${SITE_URL}/`,
-  image: `${SITE_URL}/images/hero.jpg`,
-  telephone: '+1-480-309-7607',
-  email: 'cleaningbykandi@yahoo.com',
-  priceRange: '$$',
+  image: canonicalImage('/images/hero.jpg'),
+  telephone: BUSINESS.telephone,
+  email: BUSINESS.email,
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'Surprise',
-    addressRegion: 'AZ',
-    addressCountry: 'US',
+    addressLocality: BUSINESS.addressLocality,
+    addressRegion: BUSINESS.addressRegion,
+    addressCountry: BUSINESS.addressCountry,
   },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 33.6292,
-    longitude: -112.368,
-  },
-  areaServed: AREAS.map((city) => ({
-    '@type': 'City',
-    name: `${city}, AZ`,
-  })),
+  areaServed: SERVICE_AREAS.map((city) => ({ '@type': 'City', name: `${city}, AZ` })),
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Cleaning Services',
@@ -65,7 +41,6 @@ const schema = {
 };
 
 export default function BusinessSchema() {
-  // JSON-LD is valid anywhere in the document; Google reads it from the body too.
   return (
     <script
       type="application/ld+json"

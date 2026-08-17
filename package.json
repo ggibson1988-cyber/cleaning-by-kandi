@@ -5,9 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build:client": "vite build",
+    "build:ssr": "vite build --ssr src/entry-server.tsx --outDir dist-ssr",
+    "prerender": "node scripts/prerender.mjs",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "build": "tsc -b && npm run build:client && npm run build:ssr && npm run prerender && npm run sitemap",
+    "verify:static": "node scripts/verify-static-output.mjs",
+    "preview": "vite preview",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "framer-motion": "^12.42.2",
