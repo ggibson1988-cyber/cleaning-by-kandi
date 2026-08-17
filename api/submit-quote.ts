@@ -1,3 +1,10 @@
+/**
+ * Server-side counterpart to `submitQuote()` in `src/lib/ghlAdapter.ts`. The
+ * frontend POSTs here (same-origin, relative `/api/submit-quote`) with the
+ * quote form fields plus consent metadata; this handler holds the GHL API
+ * key/location ID (server-side only, via GHL_API_KEY / GHL_LOCATION_ID env
+ * vars — see .env.example) and upserts the contact via GHL's Contacts API.
+ */
 export const config = { runtime: 'edge' };
 
 const CORS = {

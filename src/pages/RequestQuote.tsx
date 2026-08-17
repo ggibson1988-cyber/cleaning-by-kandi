@@ -8,7 +8,8 @@ import {
 } from 'lucide-react';
 import Seo from '../components/Seo';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { CONSENT_VERSION, TRANSACTIONAL_CONSENT_TEXT, MARKETING_CONSENT_TEXT } from '../lib/consent';
+import { TRANSACTIONAL_CONSENT_TEXT, MARKETING_CONSENT_TEXT } from '../lib/consent';
+import { submitQuote } from '../lib/ghlAdapter';
 
 const QUOTE_SEO = <Seo path="/request-quote" />;
 const QUOTE_BREADCRUMBS = <Breadcrumbs items={[{ label: 'Request a Quote', path: '/request-quote' }]} />;
@@ -110,49 +111,16 @@ export default function RequestQuote() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting) return; // duplicate-submit guard in addition to the disabled button
     setSubmitting(true);
     setSubmitError('');
-    try {
-      const res = await fetch('https://cleaning-by-kandi.vercel.app/api/submit-quote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          serviceType: form.serviceType,
-          bedrooms: form.bedrooms,
-          bathrooms: form.bathrooms,
-          sqft: form.sqft,
-          frequency: form.frequency,
-          firstName: form.firstName,
-          lastName: form.lastName,
-          email: form.email,
-          phone: form.phone,
-          city: form.city,
-          address: form.address,
-          preferredDate: form.preferredDate,
-          notes: form.notes,
-          smsTransactionalConsent: form.smsTransactionalConsent,
-          smsMarketingConsent: form.smsMarketingConsent,
-          consentTimestamp: new Date().toISOString(),
-          consentVersion: CONSENT_VERSION,
-          consentUrl: window.location.href,
-          consentTextTransactional: form.smsTransactionalConsent ? TRANSACTIONAL_CONSENT_TEXT : '',
-          consentTextMarketing: form.smsMarketingConsent ? MARKETING_CONSENT_TEXT : '',
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error ?? 'Submission failed. Please try again.');
-      }
+    const result = await submitQuote(form);
+    if (result.ok) {
       setSubmitted(true);
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error
-          ? err.message
-          : 'Something went wrong. Please try again or call us at (480) 309-7607.',
-      );
-    } finally {
-      setSubmitting(false);
+    } else {
+      setSubmitError(result.error);
     }
+    setSubmitting(false);
   };
 
   if (submitted) {
