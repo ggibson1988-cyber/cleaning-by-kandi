@@ -25,13 +25,17 @@ generates `dist/sitemap.xml`. See `docs/ARCHITECTURE.md`.
 
 ## Deployment
 
-See `docs/DEPLOYMENT.md` — Cloudflare staging steps and prerequisites. Nothing in this repo is
-deployed yet; the quote form's API handler needs a Cloudflare-Functions-shaped rewrite before a
-Cloudflare deployment's form will work — see that doc's staging prerequisites.
+See `docs/DEPLOYMENT.md` and `docs/ARCHITECTURE.md`. Nothing in this repo is deployed yet.
+Production architecture: GoHighLevel hosts `cleaningbykandi.com`; the custom frontend/build assets
+are created and deployed through Vercel. Cloudflare Workers/Pages are **not** part of the approved
+hosting architecture. How GHL will serve this frontend's clean routes is not yet designed — see
+`docs/ARCHITECTURE.md`'s "Unresolved deployment requirement" section before assuming any staging
+or production path.
 
-## Local Cloudflare preview
+## Local preview
 
-    npm run preview:cf
+    npm run preview
 
-Builds and serves `dist/` through `wrangler dev`'s local Workers runtime emulation. Localhost
-only — no Cloudflare account or network deployment involved.
+Vite's own generic build-preview server. Localhost only. See `docs/DEPLOYMENT.md` for its known
+trailing-slash limitation — it does not prove canonical no-trailing-slash URLs will work in
+production.

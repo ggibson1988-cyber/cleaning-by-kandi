@@ -1,42 +1,74 @@
 # Architecture
 
-This is the decision record for the `feature/seo-foundation-cloudflare` work: replacing a
-HashRouter single-page app (only crawlable/functional when embedded inside a GoHighLevel page
-shell) with a directly-hosted, prerendered static site. It exists so the next person who touches
-this repo doesn't have to re-derive *why* things are shaped the way they are.
+This is the decision record for the `feature/seo-foundation-cloudflare` work (branch name is
+historical — see "Correction" below): replacing a HashRouter single-page app (only
+crawlable/functional when embedded inside a GoHighLevel page shell) with clean routes and real
+prerendered HTML for every public page. It exists so the next person who touches this repo
+doesn't have to re-derive *why* things are shaped the way they are.
 
 For historical context on the abandoned "rebuild natively in GHL" direction, see the superseded
 notice at the top of `CLAUDE.md`.
 
-## System diagram
+**Correction (this revision):** an earlier version of this document, and this branch's name,
+assumed Cloudflare Workers/Pages as the hosting target. **That was a mistake — Cloudflare hosting
+was never approved.** Cloudflare-specific implementation (`wrangler.jsonc`, the
+`@cloudflare/vite-plugin` dev-mode integration, the `preview:cf` script, and the Cloudflare
+staging instructions previously in this document and `docs/DEPLOYMENT.md`) has been removed. The
+branch retains its original name and git history for traceability; nothing about the name implies
+Cloudflare is still in scope.
+
+## Current production architecture (verified facts)
+
+- `cleaningbykandi.com` is served through **GoHighLevel**.
+- The custom React frontend/build assets were created and deployed through **Vercel**.
+- GoHighLevel remains responsible for CRM, workflows, and the existing live form/lead integration.
+- **Cloudflare Workers/Pages are not part of the approved hosting architecture.**
+- DNS management is a separate concern from website hosting and must not be conflated with it —
+  the presence of any Cloudflare DNS records does not imply Cloudflare hosting is authorized.
+
+## What this branch produces
+
+- Platform-neutral prerendered HTML files for all 7 public routes (`dist/<route>/index.html`)
+  plus a real `dist/404.html`.
+- Per-route metadata, canonicals, LocalBusiness/BreadcrumbList JSON-LD, a generated
+  `dist/sitemap.xml`, and the existing `dist/robots.txt`.
+- This output has passed local structural verification (`npm run verify:static`, cheerio
+  assertions against the built files) and local browser checks (a generic Vite preview server —
+  see "Route/canonical limitation" below).
+- **It has not been integrated with GHL, and has not been deployed to Vercel.** It is not yet
+  known how GHL will serve these clean prerendered routes — see "Unresolved deployment
+  requirement" below. Nothing in this document should be read as claiming otherwise.
+
+## System diagram (target shape — routing mechanism not yet designed)
 
 ```
-                     ┌─────────────────────────────┐
-  Browser ─────────▶ │  Cloudflare (static assets)  │
-                     │  dist/ — prerendered HTML,    │
-                     │  hashed JS/CSS, images,       │
-                     │  sitemap.xml, robots.txt      │
-                     └───────────────┬───────────────┘
-                                      │ quote form POST
-                                      ▼
-                     ┌─────────────────────────────┐
-                     │  /api/submit-quote            │
-                     │  (Cloudflare Worker fetch     │
-                     │   handler — NOT YET WRITTEN,   │
-                     │   see below)                   │
-                     └───────────────┬───────────────┘
-                                      │ Contacts API (upsert)
-                                      ▼
-                     ┌─────────────────────────────┐
-                     │  GoHighLevel                  │
-                     │  CRM, tags, opportunity,       │
-                     │  owner notification, workflows │
-                     └─────────────────────────────┘
+  Browser ─────────▶  cleaningbykandi.com (served through GoHighLevel)
+                                │
+                                │  ??? — undesigned: how does GHL route
+                                │  /about, /services, etc. to this
+                                │  frontend's prerendered HTML?
+                                ▼
+                       Custom React frontend
+                       (built assets deployed via Vercel)
+                                │
+                                │  quote form POST
+                                ▼
+                       /api/submit-quote
+                       (Vercel Edge Function —
+                        see "Form integration
+                        contract" below)
+                                │
+                                │  Contacts API (upsert)
+                                ▼
+                       GoHighLevel
+                       CRM, tags, opportunity,
+                       owner notification, workflows
 ```
 
-The frontend is fully static — every public route is prerendered HTML served directly from
-Cloudflare's asset layer, no server render on request. GoHighLevel is no longer the page shell;
-it's the CRM/workflow backend sitting behind one API endpoint that the quote form calls.
+The frontend build is fully static/prerendered — every public route has real per-route HTML, no
+server render needed at request time for the page content itself. GoHighLevel remains the CRM,
+workflow, and (per current production) public-domain host; whether/how it fronts this Vercel-built
+frontend for the six clean sub-routes is the open question this document does not resolve.
 
 ## Why prerendering via a Node SSR entry (not Next/Astro/Remix)
 
@@ -56,7 +88,8 @@ registry (`src/lib/routes.ts`), calls `render()` for each path, injects the per-
 block (title/description/canonical/OG/Twitter/JSON-LD), and writes real
 `dist/<route>/index.html` files plus `dist/404.html`. This reuses dependencies already installed
 (`react-dom`, `react-router-dom`) and keeps the entire page/component tree — including Tailwind
-styling — untouched. Smallest-footprint path to real per-route static HTML.
+styling — untouched. Smallest-footprint path to real per-route static HTML, and this output is
+host-agnostic: it's plain files, not tied to any specific hosting product.
 
 The client hydrates the same tree via `src/entry-client.tsx` (`hydrateRoot` + `BrowserRouter`),
 so the prerendered HTML and the client-hydrated app are the same component graph rendered two
@@ -75,7 +108,7 @@ A single-token fix guarantees every current and future consumer of `--color-prim
 AA-compliant value automatically, and preserves the intended visual relationship between the
 primary/primary-dark pair instead of letting 20 call sites drift independently over time.
 
-## Why the GHL-shell-era absolute URLs, pinned filenames, and vercel.json cache headers were removed
+## Why the GHL-shell-era absolute URLs and pinned filenames were removed
 
 The prior iteration of this site was designed to be embedded inside a GoHighLevel page (loaded
 via `<script>`/`<link>` tags pointing at a separately-hosted bundle), which required:
@@ -88,7 +121,7 @@ via `<script>`/`<link>` tags pointing at a separately-hosted bundle), which requ
   reference stable, predictable filenames instead of Vite's normal content-hashed output.
   Pinning also broke `dist-ssr/entry-server.js`'s expected filename, since the same rollup config
   applied to the SSR build.
-  This is now solved differently, and better, for direct hosting: `scripts/prerender.mjs`
+  This is now solved differently, for direct/clean-URL hosting of any kind: `scripts/prerender.mjs`
   injects each page's actual (hashed) asset paths straight from the SSR-built HTML, so there's
   never a need to guess a filename.
 - **`vercel.json` cache-control headers** targeting those literal `cbk.js`/`cbk.css` filenames,
@@ -96,47 +129,23 @@ via `<script>`/`<link>` tags pointing at a separately-hosted bundle), which requ
   immutable by construction — the filename itself changes on every content change — so
   aggressive long-TTL caching is safe by default without bespoke header rules).
 
-Direct hosting means the site is served from its own canonical origin
-(`https://cleaningbykandi.com`), so none of the above cross-origin accommodations are needed.
-`vercel.json` was reverted to a minimal SPA rewrite (kept only as a Vercel fallback — Cloudflare
-is the actual staging target and doesn't read this file), and `vite.config.ts` no longer pins
-output filenames.
+If this frontend is ever served from its own canonical origin end-to-end
+(`https://cleaningbykandi.com`) rather than embedded via a page shell, none of the above
+cross-origin accommodations would be needed. `vercel.json` was reverted to a minimal SPA rewrite.
 
-**`vercel.json`'s catch-all rewrite is a latent soft-404 conflict if ever deployed to Vercel.**
+**`vercel.json`'s catch-all rewrite is a live soft-404 concern, not a historical footnote.**
 `vercel.json` still reads `{"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]}` — a
-catch-all that would return a `200` with `index.html` for every unmatched path if this project
-were ever actually deployed to Vercel. Cloudflare never reads this file (it reads
-`wrangler.jsonc`, whose `assets.not_found_handling: "404-page"` correctly returns a real 404), so
-today this has zero effect on the actual deployment target. But it's a real landmine if the
-deployment target ever changed: that rewrite would reintroduce exactly the soft-404 behavior this
-whole migration exists to remove — every unmatched path would 200 with the homepage instead of a
-real 404. Achieving parity with the current Cloudflare config on Vercel would require, at minimum,
-`cleanUrls: true` plus real 404 handling (for example a Vercel Edge Middleware checking requested
-paths against the `src/lib/routes.ts` registry) — neither of which this project has built or
-verified. `vercel.json` is deliberately left as-is (not deleted, not "fixed") since Cloudflare is
-the only target this branch actually supports; this paragraph exists so a future deploy-target
-change doesn't silently reintroduce the soft-404 bug this migration removed.
-
-## Cloudflare-specific config decisions
-
-`wrangler.jsonc`'s `assets.html_handling` defaults to `"auto-trailing-slash"`, which makes the
-trailing-slash form of a path (e.g. `/about/`) canonical and 307-redirects the bare form
-(`/about`) to it. That's backwards from every canonical URL already established in this
-codebase — the sitemap, JSON-LD `url` fields, and OG tags all use the no-trailing-slash form
-(`/about`, not `/about/`) everywhere. Left at the default, every real route on the site would
-307-redirect away from its own canonical URL on first load. This was caught empirically during
-Task 13 by running `wrangler dev` and observing the redirect, then confirmed against
-Cloudflare's own docs. Fixed by setting `html_handling: "drop-trailing-slash"` explicitly in
-`wrangler.jsonc`, which makes the bare (no-slash) path canonical and redirects the slash variant
-instead — matching this codebase's existing URL convention rather than fighting it.
-
-Similarly, `assets.not_found_handling` is set to `"404-page"` (serving `dist/404.html` with a
-real 404 status) rather than `"single-page-application"` (which would serve `index.html` with a
-200 for every unmatched path) — the latter is exactly the soft-404 behavior this whole migration
-exists to remove.
-
-Both of these needed research into Cloudflare's asset-routing behavior specifically — they
-weren't things that could be transcribed unchanged from a generic Vite/Cloudflare template.
+catch-all that returns a `200` with `index.html` for every unmatched path. **Because Vercel is
+the confirmed host for this project's build assets**, this rewrite is directly relevant to
+whatever the eventual GHL/Vercel delivery design turns out to be: if Vercel ever serves this
+frontend's routes directly (rather than only as a build-asset source consumed some other way),
+this catch-all would reintroduce exactly the soft-404 behavior this SEO work exists to remove —
+every unmatched path would `200` with the homepage instead of a real 404. Achieving real
+per-route 404s on Vercel would require, at minimum, `cleanUrls: true` plus real 404 handling (for
+example a Vercel Edge Middleware checking requested paths against the `src/lib/routes.ts`
+registry) — neither of which this project has built or verified. This is called out explicitly
+here because it is now an open item for whoever designs the GHL/Vercel delivery mechanism, not
+something already solved.
 
 ## Image optimization: AVIF variants are generated but not wired into `<picture>`
 
@@ -176,6 +185,29 @@ regenerating source assets.
   (correctly) describes them as part of the migration's overall story. Noted here so that isn't
   mistaken for an inaccuracy in this document versus a quirk of where the branch's history starts.
 
+## Route/canonical limitation (verified, do not overclaim)
+
+- The build's prerender step (`scripts/prerender.mjs`) produces real, route-specific
+  `dist/<route>/index.html` files — this is a file-level fact, verified directly against the
+  files on disk (`npm run verify:static`).
+- Locally previewing this output with Vite's own generic preview server (`npm run preview`)
+  serves the **trailing-slash** form of each route correctly (e.g. `/about/` → 200, correct
+  content) but returns 404 for the **canonical, no-trailing-slash** form (`/about`) — this is a
+  documented limitation of Vite's own static-file middleware, unrelated to any specific hosting
+  platform.
+- **This does not establish that the canonical no-trailing-slash URL (`/about`, as used
+  everywhere in this codebase's sitemap, JSON-LD, and OG tags) will return HTTP 200 under
+  whatever actually serves `cleaningbykandi.com` in production.** The production hosting layer —
+  once the GHL/Vercel delivery design is decided — must make each exact canonical URL return
+  HTTP 200 with the intended HTML, and must return a genuine HTTP 404 (not a 200 with the
+  homepage) for unmatched paths. Neither has been verified against the real production path.
+- **Canonical URL style (trailing-slash vs. not) must be decided together with the eventual
+  hosting behavior, not changed unilaterally to make a local preview tool happy.** No canonicals
+  were changed to trailing-slash form to satisfy Vite preview's limitation above.
+- No generic SPA fallback (serving `index.html` with a 200 for every unmatched path) has been
+  added anywhere in this branch. `vercel.json`'s pre-existing catch-all rewrite (see above) is the
+  one already-present exception to be aware of if Vercel ever serves routes directly.
+
 ## Open questions for the owner
 
 These are not guessed or resolved anywhere in the repo — they need real answers from the business
@@ -202,13 +234,13 @@ owner before certain content/config can be finalized:
    `preferred_date`, `job_description`, and several `consent_*`/`sms_*` keys — these need to be
    confirmed against the actual custom-field keys configured in the live GHL sub-account before
    the form can be trusted to write data GHL's workflows can actually use. **This — combined with
-   the Cloudflare Worker rewrite below — blocks calling the form integration "production-ready."**
-   One key name was corrected during this branch's development: the transactional-SMS-consent
-   custom field key was `sms_transactional_constent` (missing the "n" in "consent") and is now
-   `sms_transactional_consent`. If the owner's live GHL sub-account already has a custom field
-   configured with the old, typo'd spelling from prior testing, they'll need to either rename it
-   in GHL or override this code — a mismatched key means that field will silently fail to
-   populate, with no error surfaced anywhere.
+   the unresolved GHL/Vercel delivery design below — blocks calling the form integration
+   "production-ready."** One key name was corrected during this branch's development: the
+   transactional-SMS-consent custom field key was `sms_transactional_constent` (missing the "n"
+   in "consent") and is now `sms_transactional_consent`. If the owner's live GHL sub-account
+   already has a custom field configured with the old, typo'd spelling from prior testing,
+   they'll need to either rename it in GHL or override this code — a mismatched key means that
+   field will silently fail to populate, with no error surfaced anywhere.
 5. **Real business hours**, if any are ever to be published. Currently correctly omitted from
    JSON-LD as unverified (fabricating hours would violate this plan's Global Constraint against
    unsupported/unverified business facts in structured data).
@@ -223,74 +255,62 @@ owner before certain content/config can be finalized:
    the owner on the accurate, current set of service areas before either list (or the page copy
    and meta description that reference these cities) can be trusted as canonical.
 
-## Form integration contract and known blocker: `api/submit-quote.ts` will not run unmodified on a Cloudflare Worker
+## Unresolved deployment requirement — production migration is blocked until this is designed
 
-This was discovered while documenting deployment (Task 14), not part of the original spec's
-problem list, and is significant enough to repeat here in full.
+**This is the central open question and it has not been guessed or invented anywhere in this
+repo.** Production migration cannot proceed until the delivery design answers, at minimum:
 
-**Important correction (this fix wave):** an earlier draft of this section described the remedy
-in terms of **Cloudflare Pages Functions** (a `functions/api/submit-quote.ts` file exporting
-`onRequestPost(context)`, reading secrets from `context.env`). That was wrong for this project.
-`wrangler.jsonc` in this repo uses the **Workers static-assets model**
-(`assets.directory`/`assets.html_handling`/`assets.not_found_handling`, already built and
-verified working live via `wrangler dev`) — a different Cloudflare product from Pages, with a
-different config surface and a different Functions convention. The description below has been
-corrected to match the Workers model this project actually uses.
+1. **How will GHL serve `/about`, `/services`, `/service-areas`, `/request-quote`, `/privacy`,
+   and `/terms`?** GHL currently hosts `cleaningbykandi.com`. This branch's prerendered output
+   assumes something serves those exact paths with this project's built HTML — the mechanism
+   (GHL-side proxy/rewrite? a different DNS/routing arrangement? something else?) is undesigned.
+2. **Will each clean URL return the correct initial HTML** — the actual prerendered page content,
+   not a generic GHL page-shell fallback or an error page?
+3. **Will the canonical no-trailing-slash URL (e.g. `/about`) return HTTP 200?** Not verified for
+   any real hosting arrangement — see "Route/canonical limitation" above.
+4. **Will missing URLs return a genuine HTTP 404?** Not a `200` with the homepage, and not a GHL
+   default/soft-404 page silently substituted for a real 404 status.
+5. **How will Vercel-built assets or pages be connected to GHL?** I.e., what is the actual
+   mechanism by which a request that GHL receives for `cleaningbykandi.com/services` ends up
+   being answered by this Vercel-built frontend's content?
+6. **How will the current GHL form/workflow behavior be preserved?** The live site's existing
+   lead-capture behavior (contact creation, tagging, owner notification, workflows) must not
+   regress during any migration.
+7. **What is the rollback procedure** if a delivery-mechanism change causes a regression on the
+   live domain?
 
-`api/submit-quote.ts` is written in **Vercel's Edge Function convention**:
+A Vercel preview URL, on its own, would only test the frontend artifact in isolation — it would
+not answer any of the seven questions above, since none of them are about whether the React app
+itself works. It is not presented here as an answer to this open question.
 
-```ts
-export const config = { runtime: 'edge' };
-export default async function handler(req: Request): Promise<Response> { ... }
-```
+## Form integration contract
 
-**A Cloudflare Worker serving static assets (this project's actual shape) does not use a
-`functions/` directory at all — that convention is Pages-specific.** Instead, a Worker project has
-a single script entry point declared via the top-level `main` field in `wrangler.jsonc` (for
-example `"main": "src/worker.ts"`), which exports a `fetch(request, env, ctx)` handler. Per
-Cloudflare's current static-assets routing docs: when a `main` script is configured alongside
-`assets`, a request that matches a file in the assets directory is served directly (no Worker
-code runs); a request that does **not** match any static asset is passed to the Worker's `fetch`
-handler if one is configured (this is the default — no extra config needed for a same-origin
-`fetch()` POST like the quote form's, since it isn't a top-level navigation request and
-`/api/submit-quote` doesn't correspond to a file in `dist/`). The Worker can then handle the
-request itself, or fall back to serving assets via an assets binding (`env.ASSETS.fetch(request)`)
-if it decides the path isn't one it owns.
+`api/submit-quote.ts` is written in **Vercel's Edge Function convention**
+(`export const config = { runtime: 'edge' }`, default-exported `handler(req: Request)`, reading
+`GHL_API_KEY`/`GHL_LOCATION_ID` server-side via `process.env`-style access, never exposed to the
+client bundle). **Since Vercel is the confirmed host for this project's build assets, this shape
+is plausibly already correctly targeted** — unlike the Cloudflare-Worker-shaped rewrite an earlier
+version of this document incorrectly said was required, no rewrite of this handler's export shape
+is currently known to be needed.
 
-The concrete migration path, based on Cloudflare's current documented Workers static-assets
-behavior:
+What remains genuinely unverified, regardless of hosting question:
 
-- Add `"main": "src/worker.ts"` (or similar) to `wrangler.jsonc`, pointing at a small Worker
-  entry script.
-- Add a `"binding": "ASSETS"` key inside the existing `assets` block, so the Worker can
-  explicitly defer to the static-asset handler for anything it doesn't own
-  (`env.ASSETS.fetch(request)`).
-- In `src/worker.ts`, check the request URL/method inside `fetch(request, env, ctx)`: if it's a
-  POST to `/api/submit-quote`, run (a Worker-flavored port of) the current handler's logic; for
-  anything else, defer to `env.ASSETS.fetch(request)`.
-- Optionally, add `"run_worker_first": ["/api/*"]` to the `assets` block for explicit, unambiguous
-  routing of API paths to the Worker regardless of request type, rather than relying on the
-  implicit "unmatched-asset requests fall through to the Worker" default behavior.
-- Secrets (`GHL_API_KEY`, `GHL_LOCATION_ID`) are read from the Worker's own `env` parameter (the
-  binding-based environment object Workers pass into `fetch(request, env, ctx)`), not from
-  `process.env` or a Pages-style `context.env` — the current file's
-  `(globalThis as any).process?.env` access pattern is a Vercel-Edge-Function-specific
-  accommodation and doesn't map onto this model either.
+- **Whether this Vercel Edge Function is actually deployed and reachable** at `/api/submit-quote`
+  from wherever the production frontend ends up being served from (see "Unresolved deployment
+  requirement" above — if GHL fronts the domain, does a same-origin relative `fetch('/api/submit-quote')`
+  from the browser actually reach this Vercel function, or does it need an absolute URL / different
+  routing?).
+- **Real GHL API key, GHL location ID, and field-mapping confirmation** against the live GHL
+  sub-account (see "Open questions for the owner," item 4).
+- **Rate limiting and/or bot protection on `/api/submit-quote`.** This is a public lead-capture
+  endpoint with no abuse protection today — no rate limiting, no CAPTCHA/challenge. Every
+  successful call fires real GHL workflows (contact creation, owner notification), so an
+  unprotected endpoint is a spam/abuse vector once this is actually live. Adding this requires
+  product decisions (which mechanism, what thresholds) and credentials that weren't available
+  during this work, so it was deliberately not implemented — but it should be added before real
+  deployment, regardless of hosting choice.
 
-**This shape (the `main`/`fetch`/`env.ASSETS` mechanism, and specifically the
-`run_worker_first` route-pattern option) was confirmed against Cloudflare's current Workers
-static-assets documentation during this fix wave, but the exact config surface is a fast-moving
-part of the platform — re-verify against current Cloudflare docs immediately before implementing,
-rather than transcribing this section verbatim into code.**
-
-**Net effect: the quote form's server-side handler will not run as-is if this site is deployed to
-Cloudflare with the current `api/submit-quote.ts` file.** It needs a real rewrite — new file
-location and entry point, new export shape (`fetch(request, env, ctx)` instead of a default
-`handler(req)`), new env-var access pattern (Worker `env`, not `process.env`) — before form
-submissions will work in a Cloudflare-hosted deployment.
-
-This rewrite was deliberately **not** attempted as part of this plan. It touches
-production-critical form/consent code (the same handler that upserts real contacts into GHL and
-records SMS-consent metadata), and this plan's own stop conditions call out exactly this class of
-change ("direct hosting would break the current quote workflow") as out of scope pending explicit
-confirmation. See `docs/DEPLOYMENT.md` for this listed as a staging prerequisite.
+This form/consent code was deliberately not further modified in this pass — it's
+production-critical (the same handler that would upsert real contacts into GHL and record
+SMS-consent metadata), and remains blocked on the items above, not on any hosting-platform-shape
+mismatch.

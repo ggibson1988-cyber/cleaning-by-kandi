@@ -25,8 +25,8 @@ export type QuoteSubmitResult = { ok: true } | { ok: false; error: string };
  * Posts a quote request to our own /api/submit-quote edge function, which
  * holds the GHL API key/location ID server-side and upserts the contact via
  * GHL's Contacts API. This is a same-origin relative path on purpose — it
- * works identically whether the frontend is on Vercel or Cloudflare, as long
- * as /api/submit-quote is deployed alongside it (see docs/ARCHITECTURE.md
+ * works as long as /api/submit-quote is deployed alongside the frontend and
+ * reachable at that same origin (see docs/ARCHITECTURE.md
  * "Form integration contract" for the current status of that deployment).
  */
 export async function submitQuote(form: QuotePayload): Promise<QuoteSubmitResult> {
