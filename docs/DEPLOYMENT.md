@@ -56,7 +56,9 @@ shape, the GHL form adapter (fully mocked `fetch`, no real network calls), and c
 ratios for the token pairs fixed in this plan. `npm run verify:static` must run **after**
 `npm run build` — it inspects the actual `dist/` output on disk (canonical URLs, H1s, JSON-LD,
 sitemap completeness) rather than the React source, catching build-pipeline regressions that
-unit tests against source alone wouldn't.
+unit tests against source alone wouldn't. It also fails the build if `vercel.json` is ever
+reintroduced with a catch-all-to-homepage rewrite (see docs/ARCHITECTURE.md, "Route/canonical
+limitation") — that config file doesn't exist in this branch as of 2026-08-21.
 
 ## Local preview (generic, not tied to any hosting platform)
 

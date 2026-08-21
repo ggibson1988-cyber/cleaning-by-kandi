@@ -131,21 +131,23 @@ via `<script>`/`<link>` tags pointing at a separately-hosted bundle), which requ
 
 If this frontend is ever served from its own canonical origin end-to-end
 (`https://cleaningbykandi.com`) rather than embedded via a page shell, none of the above
-cross-origin accommodations would be needed. `vercel.json` was reverted to a minimal SPA rewrite.
+cross-origin accommodations would be needed. `vercel.json` was reverted to a minimal SPA rewrite —
+**and that rewrite itself was later confirmed to be a real bug, not just a theoretical one.**
 
-**`vercel.json`'s catch-all rewrite is a live soft-404 concern, not a historical footnote.**
-`vercel.json` still reads `{"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]}` — a
-catch-all that returns a `200` with `index.html` for every unmatched path. **Because Vercel is
-the confirmed host for this project's build assets**, this rewrite is directly relevant to
-whatever the eventual GHL/Vercel delivery design turns out to be: if Vercel ever serves this
-frontend's routes directly (rather than only as a build-asset source consumed some other way),
-this catch-all would reintroduce exactly the soft-404 behavior this SEO work exists to remove —
-every unmatched path would `200` with the homepage instead of a real 404. Achieving real
-per-route 404s on Vercel would require, at minimum, `cleanUrls: true` plus real 404 handling (for
-example a Vercel Edge Middleware checking requested paths against the `src/lib/routes.ts`
-registry) — neither of which this project has built or verified. This is called out explicitly
-here because it is now an open item for whoever designs the GHL/Vercel delivery mechanism, not
-something already solved.
+**`vercel.json`'s catch-all rewrite — removed 2026-08-21, confirmed as a live defect first.**
+A Vercel preview deployment of this exact branch was checked directly (`curl`, live HTTP, not
+just local files): every real route matched its prerendered file correctly, but a genuinely
+nonexistent path returned `200` with the homepage instead of a `404` — `vercel.json`'s
+`{"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]}` was catching every path with
+no matching static file, exactly the soft-404 behavior this SEO work exists to remove. `vercel.json`
+has been deleted entirely: Vercel's default static serving already returns `dist/404.html` with a
+real `404` status for unmatched paths with no rewrite config needed, and already correctly serves
+each route's own prerendered file for both the trailing-slash and no-trailing-slash forms without
+any `cleanUrls` setting — both were true even before this fix, since existing static files take
+priority over `rewrites` regardless of what the rewrite says. `scripts/verify-static-output.mjs`
+now asserts `vercel.json` cannot reintroduce a catch-all-to-homepage rewrite (or a malformed one)
+without failing `npm run verify:static`. **Not yet re-verified against a live preview after this
+specific change** — see docs/DEPLOYMENT.md for what a follow-up preview deploy would confirm.
 
 ## Image optimization: AVIF variants are generated but not wired into `<picture>`
 
@@ -195,18 +197,22 @@ regenerating source assets.
   content) but returns 404 for the **canonical, no-trailing-slash** form (`/about`) — this is a
   documented limitation of Vite's own static-file middleware, unrelated to any specific hosting
   platform.
-- **This does not establish that the canonical no-trailing-slash URL (`/about`, as used
-  everywhere in this codebase's sitemap, JSON-LD, and OG tags) will return HTTP 200 under
-  whatever actually serves `cleaningbykandi.com` in production.** The production hosting layer —
-  once the GHL/Vercel delivery design is decided — must make each exact canonical URL return
-  HTTP 200 with the intended HTML, and must return a genuine HTTP 404 (not a 200 with the
-  homepage) for unmatched paths. Neither has been verified against the real production path.
+- **Updated 2026-08-21, verified against a real Vercel preview deployment of this branch (`curl`,
+  live HTTP), not just local files or assumption:** the canonical no-trailing-slash URL (`/about`,
+  as used everywhere in this codebase's sitemap, JSON-LD, and OG tags) **does** return HTTP 200
+  with the correct route-specific content on Vercel — existing static files (Vercel's clean-URL
+  directory-index resolution for `dist/<route>/index.html`) take priority over any `rewrites`
+  entry, so this was already true before the fix below. A genuinely nonexistent path, however,
+  returned `200` with the homepage instead of a real `404` — a confirmed defect, not a theoretical
+  one — traced to `vercel.json`'s catch-all rewrite (see above). That file has since been deleted;
+  this specific fix has not yet been re-verified against a live preview (see docs/DEPLOYMENT.md).
 - **Canonical URL style (trailing-slash vs. not) must be decided together with the eventual
   hosting behavior, not changed unilaterally to make a local preview tool happy.** No canonicals
   were changed to trailing-slash form to satisfy Vite preview's limitation above.
-- No generic SPA fallback (serving `index.html` with a 200 for every unmatched path) has been
-  added anywhere in this branch. `vercel.json`'s pre-existing catch-all rewrite (see above) is the
-  one already-present exception to be aware of if Vercel ever serves routes directly.
+- No generic SPA fallback (serving `index.html` with a 200 for every unmatched path) exists
+  anywhere in this branch as of 2026-08-21 — `vercel.json`'s catch-all rewrite was the one
+  exception, and it has been removed (see above). `scripts/verify-static-output.mjs` now fails the
+  build if `vercel.json` is ever reintroduced with a catch-all-to-homepage rewrite.
 
 ## Open questions for the owner
 
@@ -261,10 +267,16 @@ repo.** Production migration cannot proceed until the delivery design answers, a
    (GHL-side proxy/rewrite? a different DNS/routing arrangement? something else?) is undesigned.
 2. **Will each clean URL return the correct initial HTML** — the actual prerendered page content,
    not a generic GHL page-shell fallback or an error page?
-3. **Will the canonical no-trailing-slash URL (e.g. `/about`) return HTTP 200?** Not verified for
-   any real hosting arrangement — see "Route/canonical limitation" above.
-4. **Will missing URLs return a genuine HTTP 404?** Not a `200` with the homepage, and not a GHL
-   default/soft-404 page silently substituted for a real 404 status.
+3. **Will the canonical no-trailing-slash URL (e.g. `/about`) return HTTP 200?** **Confirmed yes
+   (2026-08-21) on Vercel's own preview domain** (`*.vercel.app`) — see "Route/canonical
+   limitation" above. Still unverified under `cleaningbykandi.com` specifically, since that
+   depends entirely on the still-undesigned GHL-side mechanism in item 1.
+4. **Will missing URLs return a genuine HTTP 404?** **Confirmed as a real defect on Vercel's own
+   preview domain (2026-08-21), now fixed at the config level** (`vercel.json`'s catch-all rewrite
+   removed — see "Route/canonical limitation" above) but not yet re-verified live post-fix. Still
+   entirely unknown under `cleaningbykandi.com`/GHL: not a `200` with the homepage, and not a GHL
+   default/soft-404 page silently substituted for a real 404 status, is the goal — unverified
+   until item 1 is designed.
 5. **How will Vercel-built assets or pages be connected to GHL?** I.e., what is the actual
    mechanism by which a request that GHL receives for `cleaningbykandi.com/services` ends up
    being answered by this Vercel-built frontend's content? **Partially addressed code-side

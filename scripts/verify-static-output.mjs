@@ -11,6 +11,49 @@ const { ROUTES, SITE_URL } = await import(resolve(root, 'dist-ssr/entry-server.j
 const failures = [];
 const fail = (msg) => failures.push(msg);
 
+// vercel.json must never reintroduce a catch-all SPA rewrite to the
+// homepage — that makes every unmatched path return 200 with index.html
+// instead of a real 404, silently undoing this project's per-route
+// prerendering (see docs/ARCHITECTURE.md, "vercel.json's catch-all rewrite
+// is a live soft-404 concern"). No vercel.json at all is fine — Vercel's
+// default static serving already returns dist/404.html with a real 404 for
+// unmatched paths without any rewrite config.
+try {
+  const rawVercelConfig = await readFile(resolve(root, 'vercel.json'), 'utf-8');
+  let vercelConfig;
+  try {
+    vercelConfig = JSON.parse(rawVercelConfig);
+  } catch (parseErr) {
+    fail(`vercel.json exists but is not valid JSON: ${parseErr.message}`);
+    vercelConfig = null;
+  }
+  if (vercelConfig) {
+    const rewriteEntries = Array.isArray(vercelConfig.rewrites)
+      ? vercelConfig.rewrites
+      : [
+          ...(vercelConfig.rewrites?.beforeFiles ?? []),
+          ...(vercelConfig.rewrites?.afterFiles ?? []),
+          ...(vercelConfig.rewrites?.fallback ?? []),
+        ];
+    const CATCH_ALL_SOURCES = new Set(['/(.*)', '(.*)', '/:path*', '/:match*', '/*', '*']);
+    const HOMEPAGE_DESTINATIONS = new Set(['/index.html', 'index.html', '/']);
+    for (const rule of rewriteEntries) {
+      if (CATCH_ALL_SOURCES.has(rule.source) && HOMEPAGE_DESTINATIONS.has(rule.destination)) {
+        fail(
+          `vercel.json has a catch-all rewrite ("${rule.source}" -> "${rule.destination}") that ` +
+            `would serve the homepage with HTTP 200 for every unmatched path instead of a real ` +
+            `404 — see docs/ARCHITECTURE.md`
+        );
+      }
+    }
+  }
+} catch (err) {
+  if (err.code !== 'ENOENT') {
+    fail(`vercel.json could not be read: ${err.message}`);
+  }
+  // ENOENT (no vercel.json) is fine — no rewrites config means no catch-all.
+}
+
 for (const route of ROUTES) {
   const htmlPath = route.outDir === '' ? resolve(distDir, 'index.html') : resolve(distDir, route.outDir, 'index.html');
   let html;
