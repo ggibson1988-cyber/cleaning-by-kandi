@@ -84,7 +84,7 @@ Getting this branch onto a real staging environment requires, at minimum:
    as real Vercel environment variables — never committed to the repo. `.env.example` documents
    the variable names only.
 3. **Real GHL credentials and field-mapping confirmation** against the live GHL sub-account (see
-   `docs/ARCHITECTURE.md`'s "Open questions for the owner," item 4).
+   `docs/ARCHITECTURE.md`'s "Open questions for the owner," item 3).
 4. **Rate limiting and/or bot protection on `/api/submit-quote`.** This is a public lead-capture
    endpoint with no abuse protection today. Every successful call fires real GHL workflows
    (contact creation, owner notification), so an unprotected endpoint is a spam/abuse vector once
@@ -107,13 +107,18 @@ GHL to this frontend.
 
 ## What's intentionally unresolved
 
-- The 6 "Open questions for the owner" listed in `docs/ARCHITECTURE.md` (Organization
-  Services/Eco-Friendly Cleaning status, `priceRange`, `/cleaning-tips` resolution, real GHL
-  credentials + field-mapping confirmation, real business hours, and the service-area list
-  mismatch between `SERVICE_AREAS`/JSON-LD and the visible `/service-areas` page content).
+- 2 of the "Open questions for the owner" in `docs/ARCHITECTURE.md` remain open: real GHL
+  credentials + field-mapping confirmation, and real business hours. (Organization
+  Services/Eco-Friendly Cleaning status, `priceRange`, and the service-area list mismatch were
+  resolved 2026-08-20; see that section for details. `/cleaning-tips` is not part of the current
+  website and is no longer tracked here.)
 - The full GHL/Vercel delivery design described in `docs/ARCHITECTURE.md`'s "Unresolved
   deployment requirement" section.
-- Rate limiting and/or bot protection on `/api/submit-quote`, described above.
+- A per-IP, in-memory rate limit was added to `/api/submit-quote` (see that file), but it resets
+  on every cold start and is not shared across concurrent edge instances/regions — it is a
+  best-effort stopgap, not a durable or precise limit. It also includes no CAPTCHA/challenge-based
+  bot protection. A real solution (e.g. Vercel KV/Upstash-backed limiting, or a challenge like
+  Turnstile) needs a product decision and credentials neither of which this pass had.
 
 None of these block building, testing, or locally previewing the static site — all of them block
 treating this branch as production-ready.

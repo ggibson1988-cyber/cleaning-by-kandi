@@ -44,8 +44,6 @@ Services:
 - Move-In / Move-Out Cleaning
 - Short-Term Rental / Airbnb Cleaning
 - Commercial Cleaning
-- Organization Services
-- Eco-Friendly Cleaning
 
 ## Instructions
 

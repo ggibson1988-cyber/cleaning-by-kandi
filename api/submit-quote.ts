@@ -13,12 +13,47 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+/**
+ * Best-effort per-IP rate limit: 5 submissions per 10 minutes. This is an
+ * in-memory sliding window scoped to a single warm edge instance — it resets
+ * on cold start and is not shared across concurrent instances/regions, so it
+ * does not provide a precise or durable global limit. It exists to blunt
+ * naive scripted abuse (repeated calls from one instance) cheaply, without a
+ * new dependency or external service. A real limit (Vercel KV/Upstash-backed,
+ * or a challenge like Turnstile) needs a product decision + credentials this
+ * pass didn't have — see docs/DEPLOYMENT.md.
+ */
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX = 5;
+const requestLog = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  if (!ip) return false;
+  const now = Date.now();
+  const timestamps = (requestLog.get(ip) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (timestamps.length >= RATE_LIMIT_MAX) {
+    requestLog.set(ip, timestamps);
+    return true;
+  }
+  timestamps.push(now);
+  requestLog.set(ip, timestamps);
+  return false;
+}
+
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: CORS });
   }
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: CORS });
+  }
+
+  const requestIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
+  if (isRateLimited(requestIp)) {
+    return new Response(
+      JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+      { status: 429, headers: CORS }
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,8 +75,9 @@ export default async function handler(req: Request): Promise<Response> {
   const smsTransactionalConsent = data.smsTransactionalConsent === true;
   const smsMarketingConsent = data.smsMarketingConsent === true;
 
-  // Captured server-side, not trusted from the client.
-  const consentIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
+  // Captured server-side, not trusted from the client. Reuses the IP already
+  // extracted above for rate limiting.
+  const consentIp = requestIp;
   const consentUserAgent = req.headers.get('user-agent') || '';
 
   const customFields = [

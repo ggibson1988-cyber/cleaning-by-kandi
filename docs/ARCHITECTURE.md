@@ -213,21 +213,15 @@ regenerating source assets.
 These are not guessed or resolved anywhere in the repo — they need real answers from the business
 owner before certain content/config can be finalized:
 
-1. **Are "Organization Services" and "Eco-Friendly Cleaning" active offerings?** They're listed
-   in `CLAUDE.md`'s business facts but don't appear on `/services` or anywhere else visible on
-   the site. If yes, they need a visible page section before they can appear in metadata/JSON-LD
-   (per this plan's Global Constraint against exposing unverified/non-visible services in public
-   schema). If no, `CLAUDE.md`'s business list should be corrected to match the 5 services
-   actually offered.
-2. **`priceRange: "$$"`** was present in an early JSON-LD draft with no verifiable basis anywhere
-   in the repo. Confirm a real value with the owner, or drop the field entirely — it is currently
-   omitted from `BusinessSchema.tsx`'s output pending that confirmation.
-3. **`/cleaning-tips`** currently 404s, both in production and in this build. Per this plan's
-   scope, no new article/content is being invented this phase. Confirm whether the intended
-   resolution is a permanent 404 (current behavior, no action needed), a 410 Gone (if the page
-   used to exist and was intentionally retired), or a future replacement page (would need actual
-   content before it's built).
-4. **Real GHL API key, GHL location ID, and field-mapping confirmation.** None of this is
+1. ~~Are "Organization Services" and "Eco-Friendly Cleaning" active offerings?~~ **Resolved
+   2026-08-20:** not currently offered. `CLAUDE.md`'s business list was corrected to match the 5
+   services actually shown on `/services`. If either becomes a real offering later, it needs a
+   visible page section before it can appear in metadata/JSON-LD (per this plan's Global
+   Constraint against exposing unverified/non-visible services in public schema).
+2. ~~`priceRange: "$$"`~~ **Resolved (no action needed):** no verified value exists, so the field
+   remains omitted from `BusinessSchema.tsx`'s output, as it already was. Add it only if the owner
+   supplies a real, verifiable value.
+3. **Real GHL API key, GHL location ID, and field-mapping confirmation.** None of this is
    verifiable from the repo or from a logged-out view of the production site.
    `api/submit-quote.ts`'s `customFields` array assumes GHL custom-field keys like
    `service_type`, `cleaning_frequency`, `bedrooms`, `bathrooms`, `square_footage`,
@@ -241,19 +235,18 @@ owner before certain content/config can be finalized:
    already has a custom field configured with the old, typo'd spelling from prior testing,
    they'll need to either rename it in GHL or override this code — a mismatched key means that
    field will silently fail to populate, with no error surfaced anywhere.
-5. **Real business hours**, if any are ever to be published. Currently correctly omitted from
+4. **Real business hours**, if any are ever to be published. Currently correctly omitted from
    JSON-LD as unverified (fabricating hours would violate this plan's Global Constraint against
    unsupported/unverified business facts in structured data).
-6. **Service-area list mismatch between visible page content and JSON-LD.** `src/lib/business.ts`'s
-   `SERVICE_AREAS` constant (which feeds `BusinessSchema.tsx`'s JSON-LD `areaServed`) lists:
-   Surprise, Peoria, Glendale, Sun City, Goodyear, Buckeye. `src/pages/ServiceAreas.tsx`'s visible
-   `cities` array lists: Peoria, Surprise, Glendale, Goodyear, Phoenix, "And More" — it omits Sun
-   City and Buckeye, and includes Phoenix, which does not appear in the schema list. This is a
-   real content/schema consistency gap of exactly the kind this plan's SEO work was built to
-   catch (compare the services-list allowlist in `SERVICES` above), but for service areas instead
-   of services offered. Neither list has been assumed correct here — this needs a real answer from
-   the owner on the accurate, current set of service areas before either list (or the page copy
-   and meta description that reference these cities) can be trusted as canonical.
+5. ~~Service-area list mismatch between visible page content and JSON-LD~~ **Resolved 2026-08-20:**
+   owner confirmed Surprise, Peoria, Glendale, Sun City, Goodyear, Buckeye is the current list —
+   this already matched `SERVICE_AREAS`/JSON-LD, the footer, `RequestQuote.tsx`'s city dropdown,
+   `Home.tsx`, `About.tsx`, and `routes.ts`'s meta description; `src/pages/ServiceAreas.tsx` was
+   the sole outlier (it had Phoenix instead of Sun City/Buckeye) and was updated to match. Sun
+   City and Buckeye have no verified zip list yet, so their entries on that page ship with empty
+   zip arrays rather than guessed ones; their map-pin coordinates are placed decoratively along
+   the Loop 101 / I-10 labels already in that file, consistent with the rest of that hand-drawn,
+   "Approximate area"-labeled map — not a claim of precise geography.
 
 ## Unresolved deployment requirement — production migration is blocked until this is designed
 
@@ -301,7 +294,7 @@ What remains genuinely unverified, regardless of hosting question:
   from the browser actually reach this Vercel function, or does it need an absolute URL / different
   routing?).
 - **Real GHL API key, GHL location ID, and field-mapping confirmation** against the live GHL
-  sub-account (see "Open questions for the owner," item 4).
+  sub-account (see "Open questions for the owner," item 3).
 - **Rate limiting and/or bot protection on `/api/submit-quote`.** This is a public lead-capture
   endpoint with no abuse protection today — no rate limiting, no CAPTCHA/challenge. Every
   successful call fires real GHL workflows (contact creation, owner notification), so an
