@@ -239,10 +239,12 @@ owner before certain content/config can be finalized:
    JSON-LD as unverified (fabricating hours would violate this plan's Global Constraint against
    unsupported/unverified business facts in structured data).
 5. ~~Service-area list mismatch between visible page content and JSON-LD~~ **Resolved 2026-08-20:**
-   owner confirmed Surprise, Peoria, Glendale, Sun City, Goodyear, Buckeye is the current list —
-   this already matched `SERVICE_AREAS`/JSON-LD, the footer, `RequestQuote.tsx`'s city dropdown,
-   `Home.tsx`, `About.tsx`, and `routes.ts`'s meta description; `src/pages/ServiceAreas.tsx` was
-   the sole outlier (it had Phoenix instead of Sun City/Buckeye) and was updated to match. Sun
+   `src/pages/ServiceAreas.tsx` was updated to Surprise, Peoria, Glendale, Sun City, Goodyear,
+   Buckeye, matching `SERVICE_AREAS`/JSON-LD, the footer, `RequestQuote.tsx`'s city dropdown,
+   `Home.tsx`, `About.tsx`, and `routes.ts`'s meta description — it had been the sole outlier
+   (Phoenix instead of Sun City/Buckeye). The list was selected to align `ServiceAreas.tsx` with
+   the existing footer, JSON-LD, Home, About, and Request Quote implementation. Formal
+   verification of the business's complete service territory remains an owner-review item. Sun
    City and Buckeye have no verified zip list yet, so their entries on that page ship with empty
    zip arrays rather than guessed ones; their map-pin coordinates are placed decoratively along
    the Loop 101 / I-10 labels already in that file, consistent with the rest of that hand-drawn,
