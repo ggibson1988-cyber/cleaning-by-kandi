@@ -27,7 +27,10 @@ npm run build
 This chains, in order (see `package.json`):
 
 1. `tsc -b` — typecheck, no emit.
-2. `vite build` (`build:client`) — client bundle, hashed filenames, `dist/`.
+2. `vite build` (`build:client`) — client bundle, `dist/`. The entry JS/CSS are pinned to stable
+   filenames (`assets/cbk.js`, `assets/cbk.css` — see `vite.config.ts`) so production's GHL page,
+   which hardcodes those paths via `<script>`/`<link>` tags, keeps working across rebuilds;
+   everything else (code-split chunks, images) keeps normal content-hashed filenames.
 3. `vite build --ssr src/entry-server.tsx --outDir dist-ssr` (`build:ssr`) — server-render entry,
    output to `dist-ssr/entry-server.js`.
 4. `node scripts/prerender.mjs` (`prerender`) — imports `dist-ssr/entry-server.js`, server-renders
@@ -36,9 +39,9 @@ This chains, in order (see `package.json`):
 5. `node scripts/generate-sitemap.mjs` (`sitemap`) — writes `dist/sitemap.xml` from the same route
    registry, so it can never drift from the actual set of routes being served.
 
-Output: a fully static `dist/` directory — real per-route HTML, hashed JS/CSS, optimized images,
-sitemap, and a real 404 page. No server render happens at request time, and none of this build
-pipeline is tied to any specific hosting platform.
+Output: a fully static `dist/` directory — real per-route HTML, stable-named entry JS/CSS with
+hashed supporting assets, optimized images, sitemap, and a real 404 page. No server render happens
+at request time, and none of this build pipeline is tied to any specific hosting platform.
 
 ## Verification
 
@@ -74,26 +77,66 @@ equivalent of the real) production hosting layer, which is not yet decided.
 
 ## Staging deployment prerequisites — none of this is done yet
 
+Two of the code-side blockers to a GHL/Vercel delivery design are now resolved (2026-08-20):
+
+- The client build emits stable `assets/cbk.js`/`assets/cbk.css` filenames, matching what
+  production's GHL page already hardcodes — see "Full build" above and
+  `docs/ARCHITECTURE.md`'s "Unresolved deployment requirement," item 5.
+- `src/lib/ghlAdapter.ts`'s quote submission now reads a configurable `VITE_QUOTE_API_URL`
+  instead of assuming a same-origin relative path — see `docs/ARCHITECTURE.md`'s "Form
+  integration contract."
+
+Neither of these deploys anything or configures GHL — they only mean the pieces GHL will need to
+reference (a stable bundle, a real API URL to point at) exist and are ready to be wired up. See
+"Remaining GHL-admin work" below for what's still actually undone.
+
 Getting this branch onto a real staging environment requires, at minimum:
 
-1. **A GHL/Vercel delivery design** — see `docs/ARCHITECTURE.md`'s "Unresolved deployment
-   requirement" section for the exact open questions. This is the primary blocker; nothing below
-   can be meaningfully verified until this is decided.
-2. **Confirmation that `/api/submit-quote` (a Vercel Edge Function) is reachable from wherever
-   the production frontend is actually served**, and that `GHL_API_KEY`/`GHL_LOCATION_ID` are set
-   as real Vercel environment variables — never committed to the repo. `.env.example` documents
-   the variable names only.
+1. **The remaining GHL-admin work below** — this is the primary blocker; nothing else here can be
+   meaningfully verified until it's done.
+2. **Set `VITE_QUOTE_API_URL` to the real deployed function URL** (e.g.
+   `https://cleaning-by-kandi.vercel.app/api/submit-quote`) as a Vercel build-time environment
+   variable, and confirm `/api/submit-quote` is actually reachable at that URL from production.
+   `GHL_API_KEY`/`GHL_LOCATION_ID` must also be set as real (server-side only) Vercel environment
+   variables — never committed to the repo. `.env.example` documents all three variable names
+   only, with no real values.
 3. **Real GHL credentials and field-mapping confirmation** against the live GHL sub-account (see
    `docs/ARCHITECTURE.md`'s "Open questions for the owner," item 3).
-4. **Rate limiting and/or bot protection on `/api/submit-quote`.** This is a public lead-capture
-   endpoint with no abuse protection today. Every successful call fires real GHL workflows
-   (contact creation, owner notification), so an unprotected endpoint is a spam/abuse vector once
-   live. Adding this requires product decisions and credentials not available during this work.
+4. **Rate limiting and/or bot protection on `/api/submit-quote`** beyond the best-effort per-IP
+   limit already added (see "What's intentionally unresolved" below) — a durable, cross-instance
+   solution (Vercel KV/Upstash, or a challenge like Turnstile) needs a product decision and
+   credentials not available during this work.
 
 A Vercel preview deployment of just the frontend, on its own, would **not** answer item 1 above
 — it would only demonstrate that the React app itself builds and runs; it says nothing about how
 GHL would route real production traffic to it. It is not presented here as a substitute for
-deciding the delivery design.
+doing that GHL-admin work.
+
+## Remaining GHL-admin work
+
+This is GHL dashboard/admin configuration, not a code change — nothing in this repo can do it.
+None of it has been done:
+
+1. Create/configure the six clean GHL paths (`/about`, `/services`, `/service-areas`,
+   `/request-quote`, `/privacy`, `/terms`) — today they all 404 in production (verified directly
+   against the live site).
+2. Load the stable Vercel `cbk.js`/`cbk.css` files (see "Full build" above) on each of those
+   pages, the same way the current GHL homepage already does.
+3. Verify pathname routing — that each canonical no-trailing-slash URL (e.g. `/about`, not
+   `/about/`) actually returns HTTP 200 with the intended page content once configured (see
+   `docs/ARCHITECTURE.md`'s "Route/canonical limitation").
+4. Configure each page's metadata (title, description, canonical, OG/Twitter tags) in GHL to
+   match `src/lib/routes.ts` — or confirm GHL will pass through this build's own prerendered
+   `<head>` content instead of overriding it.
+5. Verify GHL's sitemap includes the six configured paths — production's current
+   `/sitemap.xml` is a live, empty `<urlset>` (confirmed by direct fetch), not this branch's
+   generated one.
+6. Test the real GHL field mapping and workflow end-to-end (contact creation, tagging, owner
+   notification) against the live GHL sub-account — see `docs/ARCHITECTURE.md`'s "Open questions
+   for the owner," item 3, for the specific custom-field keys this code assumes.
+7. Document the actual rollback procedure once the delivery mechanism above is chosen — it can't
+   be written generically; it depends entirely on what that mechanism turns out to be (see
+   "Rollback" below).
 
 ## Rollback
 
@@ -113,7 +156,9 @@ GHL to this frontend.
   resolved 2026-08-20; see that section for details. `/cleaning-tips` is not part of the current
   website and is no longer tracked here.)
 - The full GHL/Vercel delivery design described in `docs/ARCHITECTURE.md`'s "Unresolved
-  deployment requirement" section.
+  deployment requirement" section — two of its seven questions have code-side groundwork now
+  (stable entry filenames; a configurable quote API URL), but none of the actual GHL-admin
+  configuration work in "Remaining GHL-admin work" above has been done.
 - A per-IP, in-memory rate limit was added to `/api/submit-quote` (see that file), but it resets
   on every cold start and is not shared across concurrent edge instances/regions — it is a
   best-effort stopgap, not a durable or precise limit. It also includes no CAPTCHA/challenge-based

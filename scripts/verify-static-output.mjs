@@ -52,6 +52,16 @@ for (const route of ROUTES) {
     else if (!url.startsWith(SITE_URL)) fail(`${route.path}: ${label} "${url}" is not on the canonical origin`);
   }
 
+  // Stable entry filenames: production's GHL page embeds these via
+  // hardcoded <script>/<link> tags at fixed paths (see docs/ARCHITECTURE.md
+  // "Unresolved deployment requirement"). A content-hashed entry filename
+  // would silently 404 that embed on every deploy, so every route's built
+  // HTML must reference these exact stable URLs, not just "some" script/link.
+  const scriptSrc = $('script[type="module"]').attr('src');
+  const styleHrefs = $('link[rel="stylesheet"]').map((_, el) => $(el).attr('href')).get();
+  if (scriptSrc !== '/assets/cbk.js') fail(`${route.path}: entry script src is "${scriptSrc}", expected "/assets/cbk.js"`);
+  if (!styleHrefs.includes('/assets/cbk.css')) fail(`${route.path}: no stylesheet link with href "/assets/cbk.css" found (got: ${styleHrefs.join(', ')})`);
+
   const jsonLdScripts = $('script[type="application/ld+json"]');
   if (jsonLdScripts.length === 0) {
     fail(`${route.path}: no JSON-LD script found`);
@@ -103,6 +113,11 @@ try {
 
 // 404 exists
 await access(resolve(distDir, '404.html')).catch(() => fail('dist/404.html is missing'));
+
+// Stable entry files exist on disk at the exact paths every route's HTML
+// references above (see the per-route script/link assertions).
+await access(resolve(distDir, 'assets/cbk.js')).catch(() => fail('dist/assets/cbk.js is missing'));
+await access(resolve(distDir, 'assets/cbk.css')).catch(() => fail('dist/assets/cbk.css is missing'));
 
 if (failures.length > 0) {
   console.error(`\nstatic-output verification FAILED (${failures.length} issue(s)):\n`);

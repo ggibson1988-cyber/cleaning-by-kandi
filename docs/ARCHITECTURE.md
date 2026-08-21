@@ -265,7 +265,14 @@ repo.** Production migration cannot proceed until the delivery design answers, a
    default/soft-404 page silently substituted for a real 404 status.
 5. **How will Vercel-built assets or pages be connected to GHL?** I.e., what is the actual
    mechanism by which a request that GHL receives for `cleaningbykandi.com/services` ends up
-   being answered by this Vercel-built frontend's content?
+   being answered by this Vercel-built frontend's content? **Partially addressed code-side
+   (2026-08-20):** the client build now emits stable `assets/cbk.js`/`assets/cbk.css` filenames
+   (see `vite.config.ts`) instead of content-hashed ones, matching what production's GHL page
+   already hardcodes via `<script>`/`<link>` tags — so a rebuilt bundle won't silently 404 that
+   existing embed. This does **not** answer the question: it only means the six clean paths, once
+   GHL is configured to serve them, can load the same stable bundle GHL already knows how to
+   reference. The GHL-admin work of actually creating those six pages and pointing them at this
+   bundle is still undone — see docs/DEPLOYMENT.md's "Remaining GHL-admin work."
 6. **How will the current GHL form/workflow behavior be preserved?** The live site's existing
    lead-capture behavior (contact creation, tagging, owner notification, workflows) must not
    regress during any migration.
@@ -286,13 +293,19 @@ is plausibly already correctly targeted** — unlike the Cloudflare-Worker-shape
 version of this document incorrectly said was required, no rewrite of this handler's export shape
 is currently known to be needed.
 
+**Resolved code-side (2026-08-20):** `src/lib/ghlAdapter.ts` no longer hardcodes a same-origin
+relative path. It now reads `VITE_QUOTE_API_URL` (a build-time env var, see `.env.example`) and
+falls back to the relative `/api/submit-quote` only when that's unset — same-origin remains
+correct for a direct Vercel deployment or local `vercel dev`, but under the current GHL-fronted
+domain, `VITE_QUOTE_API_URL` must be set to the function's real absolute URL (e.g.
+`https://cleaning-by-kandi.vercel.app/api/submit-quote`) as a Vercel build-time environment
+variable before this is production-correct. Setting that real value is GHL-admin/Vercel-config
+work, not a code change — see docs/DEPLOYMENT.md's "Remaining GHL-admin work."
+
 What remains genuinely unverified, regardless of hosting question:
 
-- **Whether this Vercel Edge Function is actually deployed and reachable** at `/api/submit-quote`
-  from wherever the production frontend ends up being served from (see "Unresolved deployment
-  requirement" above — if GHL fronts the domain, does a same-origin relative `fetch('/api/submit-quote')`
-  from the browser actually reach this Vercel function, or does it need an absolute URL / different
-  routing?).
+- **Whether this Vercel Edge Function is actually deployed and reachable** at whatever URL
+  `VITE_QUOTE_API_URL` ends up pointing to.
 - **Real GHL API key, GHL location ID, and field-mapping confirmation** against the live GHL
   sub-account (see "Open questions for the owner," item 3).
 - **Rate limiting and/or bot protection on `/api/submit-quote`.** This is a public lead-capture

@@ -22,16 +22,32 @@ export interface QuotePayload {
 export type QuoteSubmitResult = { ok: true } | { ok: false; error: string };
 
 /**
- * Posts a quote request to our own /api/submit-quote edge function, which
- * holds the GHL API key/location ID server-side and upserts the contact via
- * GHL's Contacts API. This is a same-origin relative path on purpose — it
- * works as long as /api/submit-quote is deployed alongside the frontend and
- * reachable at that same origin (see docs/ARCHITECTURE.md
- * "Form integration contract" for the current status of that deployment).
+ * Confirmed live-site behavior: cleaningbykandi.com is served by GHL, not
+ * Vercel, so a same-origin relative fetch('/api/submit-quote') would hit
+ * GHL (which doesn't have that path) and 404 — see docs/ARCHITECTURE.md
+ * "Unresolved deployment requirement". VITE_QUOTE_API_URL lets the actual
+ * deployed origin be configured at build time (set to the Vercel function's
+ * absolute URL, e.g. https://cleaning-by-kandi.vercel.app/api/submit-quote,
+ * once that's decided/deployed — see .env.example). Read lazily (not hoisted
+ * to a module-level constant) so it reflects the environment at call time,
+ * not just at first import.
+ */
+function getQuoteApiUrl(): string {
+  return import.meta.env.VITE_QUOTE_API_URL || '/api/submit-quote';
+}
+
+/**
+ * Posts a quote request to the configured quote API endpoint (see
+ * getQuoteApiUrl above), which holds the GHL API key/location ID
+ * server-side and upserts the contact via GHL's Contacts API. When
+ * VITE_QUOTE_API_URL is unset, falls back to the same-origin relative path
+ * — correct only when this frontend and /api/submit-quote are deployed
+ * together on the same origin (e.g. a direct Vercel deployment, or local
+ * `vercel dev`), not through the current GHL-fronted domain.
  */
 export async function submitQuote(form: QuotePayload): Promise<QuoteSubmitResult> {
   try {
-    const res = await fetch('/api/submit-quote', {
+    const res = await fetch(getQuoteApiUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
