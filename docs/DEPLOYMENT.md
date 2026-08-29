@@ -1,12 +1,68 @@
 # Deployment
 
-This document covers building and verifying the site locally. **Nothing in this repo has been
-deployed anywhere by this branch.** Cloudflare hosting was investigated in an earlier revision of
+This document covers building, verifying, and deploying the site.
+
+> **Updated 2026-08-28 — hosting decided.** `cleaningbykandi.com` is being cut over from
+> GoHighLevel to **Vercel**, which serves this branch's prerendered static output directly. See
+> "Vercel deployment" below for the live procedure, and `docs/ARCHITECTURE.md`'s "Hosting
+> decision, 2026-08-28" for the rationale. Sections describing GHL-admin work are superseded and
+> marked as such.
+
+Historical note: **nothing in this repo had been deployed anywhere by this branch as of 2026-08-21.** Cloudflare hosting was investigated in an earlier revision of
 this document and this branch's work — that was a mistake; Cloudflare Workers/Pages were never an
 approved hosting target and all Cloudflare-specific configuration has been removed. See
 `docs/ARCHITECTURE.md` for the corrected current production architecture (GoHighLevel-hosted
 domain, Vercel-built frontend) and the unresolved GHL/Vercel delivery design that blocks any real
 staging or production migration.
+
+## Vercel deployment
+
+The project deploys as a **static site plus one Edge Function**:
+
+- `dist/` — prerendered HTML for all 7 routes, `404.html`, `sitemap.xml`, `robots.txt`, images,
+  and the pinned `assets/cbk.js` / `assets/cbk.css` entry files.
+- `api/submit-quote.ts` — a Vercel Edge Function, deployed automatically from the `api/`
+  directory. It holds the GHL credentials server-side.
+
+### Build settings
+
+`vercel.json` pins these so the dashboard cannot drift from the repo:
+
+| Setting | Value |
+| --- | --- |
+| Framework | `vite` |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+The explicit `buildCommand` matters: Vite's Vercel preset would otherwise run bare `vite build`,
+which skips the SSR, prerender, and sitemap steps and would ship a bundle with no per-route HTML.
+
+`vercel.json` contains **no `rewrites`**, deliberately. Vercel's directory-index resolution already
+serves `/about` from `dist/about/index.html` with a real `200`, and unmatched paths fall through to
+`dist/404.html`. A catch-all rewrite to `/index.html` would turn every 404 into a soft-404 — the
+defect that was found and removed on 2026-08-21. `npm run verify:static` fails the build if one
+reappears.
+
+### Required environment variables
+
+Set in the Vercel dashboard (Project → Settings → Environment Variables), for **Production** and
+**Preview**:
+
+| Variable | Scope | Value |
+| --- | --- | --- |
+| `GHL_API_KEY` | Server-side only | GHL private integration token |
+| `GHL_LOCATION_ID` | Server-side only | GHL sub-account (location) ID |
+
+Neither has a `VITE_` prefix, so neither can be inlined into the client bundle by Vite.
+**Do not add `VITE_QUOTE_API_URL`** — the site and its API now share one origin, and leaving it
+unset makes `src/lib/ghlAdapter.ts` post to the relative `/api/submit-quote`. See `.env.example`.
+
+### Domains
+
+Add both `cleaningbykandi.com` and `www.cleaningbykandi.com` to the Vercel project, with `www`
+configured to redirect to the apex. Vercel's dashboard shows the exact A record value for the apex
+and the project-specific CNAME target for `www`; use the values it displays, since they are
+assigned per project. The DNS records themselves live in Cloudflare.
 
 ## Local development
 
@@ -116,6 +172,15 @@ doing that GHL-admin work.
 
 ## Remaining GHL-admin work
 
+> **Superseded 2026-08-28.** Items 1–5 below no longer apply: with Vercel serving the domain, the
+> six clean paths, their metadata, and the sitemap come from this build rather than from hand
+> configuration in the GHL dashboard. **Item 6's field mapping was resolved 2026-08-28** — the GHL
+> custom field `sms_transactional_constent` was renamed to `sms_transactional_consent`, matching
+> what `api/submit-quote.ts` sends. What remains of item 6 is a single real end-to-end submission
+> against the live sub-account (contact creation, tagging, owner notification), which should be run
+> against the Vercel deployment URL *before* DNS is cut over. Item 7's rollback procedure is now
+> writable — see "Rollback" below.
+
 This is GHL dashboard/admin configuration, not a code change — nothing in this repo can do it.
 None of it has been done:
 
@@ -142,13 +207,24 @@ None of it has been done:
 
 ## Rollback
 
-This work exists only on the local branch `feature/seo-foundation-cloudflare` and has not been
-pushed, merged, or deployed anywhere. "Rollback," for this branch, currently just means: don't
-merge or deploy it.
+Now writable, since the delivery mechanism is decided (Vercel serves the domain).
 
-A real rollback procedure for a production migration cannot be written until the delivery design
-(item 1 above) exists — rollback mechanics depend entirely on what mechanism ends up connecting
-GHL to this frontend.
+**During DNS cutover** — the fastest path back is DNS, because the GoHighLevel site is not deleted
+by any of this:
+
+1. In Cloudflare, restore the previous GHL-pointing records for `cleaningbykandi.com` and `www`
+   (capture their exact current values *before* changing anything — see step 1 of the cutover).
+2. Because the pre-cutover TTL determines how fast this takes effect, set TTL to a low value
+   (60–300s) **before** the cutover, not during the rollback.
+3. GHL still holds the original site and all CRM data, so this restores the previous site intact.
+
+**After cutover, for a bad deploy** (DNS already on Vercel): use Vercel's **Instant Rollback**
+(Project → Deployments → previous production deployment → Promote to Production). This does not
+touch DNS and takes effect immediately.
+
+**For the quote form specifically:** if `/api/submit-quote` misbehaves, the failure is contained —
+`src/lib/ghlAdapter.ts` returns a user-facing error with the business phone number rather than
+silently dropping the lead, so submissions degrade to phone calls rather than vanishing.
 
 ## What's intentionally unresolved
 

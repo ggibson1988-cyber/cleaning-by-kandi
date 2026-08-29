@@ -17,7 +17,59 @@ staging instructions previously in this document and `docs/DEPLOYMENT.md`) has b
 branch retains its original name and git history for traceability; nothing about the name implies
 Cloudflare is still in scope.
 
+## Hosting decision, 2026-08-28: the domain moves to Vercel (supersedes the sections below)
+
+**Owner-approved.** `cleaningbykandi.com` is being cut over from GoHighLevel to **Vercel**, which
+will serve this branch's prerendered static output directly. GoHighLevel remains the CRM and keeps
+owning workflows, contacts, and lead handling — only *website hosting* moves.
+
+This decision resolves most of what the sections below record as blocked, because the questions
+they raise were all of the form "how will GHL serve these clean routes?" — GHL no longer serves
+them at all:
+
+- **"Unresolved deployment requirement" (below) is largely closed.** The mechanism connecting a
+  request for `cleaningbykandi.com/services` to this frontend is now simply: Vercel serves
+  `dist/services/index.html`. No GHL page-shell/embed routing design is needed.
+- **`docs/DEPLOYMENT.md`'s "Remaining GHL-admin work" items 1–5 no longer apply.** The six clean
+  paths, their metadata, and the sitemap are produced by this build and served by Vercel; they do
+  not need to be recreated by hand in the GHL dashboard.
+- **The quote form is now same-origin.** `VITE_QUOTE_API_URL` must be left **unset** so
+  `src/lib/ghlAdapter.ts` uses the relative `/api/submit-quote`, which resolves to the Edge
+  Function deployed alongside the site. See `.env.example`.
+- **The 404 defect is structurally fixed.** `vercel.json` was reintroduced in this revision with
+  cache headers only and deliberately **no `rewrites`** — Vercel's own directory-index resolution
+  already serves `/about` → `dist/about/index.html` with a real `200` (verified live against a
+  Vercel preview of this branch, see "Route/canonical limitation"), and unmatched paths fall
+  through to `dist/404.html` instead of being rewritten to the homepage.
+  `scripts/verify-static-output.mjs` still fails the build if a catch-all rewrite reappears.
+
+**Still open after this decision:**
+
+- ~~Real `GHL_API_KEY` / `GHL_LOCATION_ID` values must be set as Vercel environment variables~~
+  **Resolved 2026-08-28:** both are confirmed set in Vercel production. Verified non-destructively
+  by POSTing malformed JSON to the live endpoint and receiving `400 Invalid JSON` — the handler
+  checks for both credentials and returns `500 Server misconfiguration` *before* it parses the
+  body, so a `400` can only be reached when both are present.
+- ~~The custom-field key mapping in `api/submit-quote.ts` must be confirmed against the live GHL
+  sub-account.~~ **Resolved 2026-08-28 by the owner:** the misspelled GHL custom field
+  `sms_transactional_constent` was renamed to `sms_transactional_consent`, so the live sub-account
+  now matches the key this code sends. `tests/submit-quote-contract.test.ts` locks that spelling —
+  if the GHL field is ever renamed again, that test is the thing that must be updated alongside it.
+  This matters beyond correctness: the field carries TCPA consent evidence, and a key mismatch
+  fails silently (GHL accepts the upsert and drops the unknown field).
+- The pinned `assets/cbk.js` / `assets/cbk.css` filenames are **kept**. They are no longer required
+  for the primary site, but any surviving GHL funnel page that embeds the bundle still hardcodes
+  those paths, so unpinning them would break that embed silently. The `must-revalidate` headers in
+  `vercel.json` exist because these two filenames are not content-hashed.
+- DNS cutover itself (Cloudflare records) is an operational step performed outside this repo.
+
+Sections below predate this decision. They remain accurate as a record of the GHL-fronted era and
+of what was verified at the time; where they conflict with this section, this section wins.
+
 ## Current production architecture (verified facts)
+
+> **Superseded 2026-08-28** — describes the GHL-fronted
+> architecture being replaced. See the hosting decision above.
 
 - `cleaningbykandi.com` is served through **GoHighLevel**.
 - The custom React frontend/build assets were created and deployed through **Vercel**.
