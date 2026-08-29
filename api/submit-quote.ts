@@ -7,11 +7,28 @@
  */
 export const config = { runtime: 'edge' };
 
-const CORS = {
-  'Access-Control-Allow-Origin': 'https://cleaningbykandi.com',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+/**
+ * The public site is reachable at both the apex and the www host, and a browser
+ * sends whichever one the page was loaded from. A response can name only ONE
+ * origin, so reflect the caller's when it is on the allowlist rather than
+ * hardcoding one host (which would break the other) or '*' (which would let any
+ * site post leads into the CRM).
+ */
+const ALLOWED_ORIGINS = new Set([
+  'https://cleaningbykandi.com',
+  'https://www.cleaningbykandi.com',
+]);
+
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') ?? '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.has(origin) ? origin : 'https://cleaningbykandi.com',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    // Without this a shared cache could hand one origin's header to the other.
+    'Vary': 'Origin',
+  };
+}
 
 /**
  * Best-effort per-IP rate limit: 5 submissions per 10 minutes. This is an
@@ -41,6 +58,8 @@ function isRateLimited(ip: string): boolean {
 }
 
 export default async function handler(req: Request): Promise<Response> {
+  const CORS = corsHeaders(req);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: CORS });
   }

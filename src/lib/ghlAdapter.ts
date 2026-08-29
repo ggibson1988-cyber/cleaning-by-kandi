@@ -32,8 +32,29 @@ export type QuoteSubmitResult = { ok: true } | { ok: false; error: string };
  * to a module-level constant) so it reflects the environment at call time,
  * not just at first import.
  */
+/**
+ * TEMPORARY, until the Cloudflare DNS cutover.
+ *
+ * cleaningbykandi.com is still served by GoHighLevel, which loads this bundle
+ * from Vercel but has no /api/submit-quote path of its own — so a relative URL
+ * resolves against the GHL origin and fails. The default therefore addresses the
+ * Vercel function directly. api/submit-quote.ts allows both cleaningbykandi.com
+ * and www.cleaningbykandi.com as CORS origins so this cross-origin POST succeeds.
+ *
+ * AT DNS CUTOVER: set this back to '/api/submit-quote' so submissions go
+ * same-origin. The absolute URL keeps working afterwards, but leaves every
+ * submission needlessly cross-origin and dependent on the CORS allowlist.
+ *
+ * This is a plain constant rather than a build-time env var on purpose:
+ * VITE_QUOTE_API_URL is inlined by Vite at build time, so when it was unset or
+ * scoped to the wrong Vercel environment the bundle silently shipped a relative
+ * path and the live form broke with no build error. The URL is not a secret, so
+ * it belongs in code. VITE_QUOTE_API_URL still overrides it when set.
+ */
+const QUOTE_API_URL = 'https://cleaning-by-kandi.vercel.app/api/submit-quote';
+
 function getQuoteApiUrl(): string {
-  return import.meta.env.VITE_QUOTE_API_URL || '/api/submit-quote';
+  return import.meta.env.VITE_QUOTE_API_URL || QUOTE_API_URL;
 }
 
 /**

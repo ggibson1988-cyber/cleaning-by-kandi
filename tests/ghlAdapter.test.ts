@@ -29,11 +29,17 @@ describe('submitQuote — URL selection', () => {
     vi.unstubAllEnvs();
   });
 
-  it('falls back to the same-origin relative path when VITE_QUOTE_API_URL is unset', async () => {
+  it('defaults to the absolute Vercel function URL when VITE_QUOTE_API_URL is unset', async () => {
+    // Regression guard for the live outage of 2026-08-29: the bundle shipped a
+    // relative '/api/submit-quote', which resolves against the GoHighLevel origin
+    // that currently fronts cleaningbykandi.com and has no such path. Until DNS
+    // cuts over, the default must be absolute. See src/lib/ghlAdapter.ts.
     vi.stubEnv('VITE_QUOTE_API_URL', '');
+    const fetchMock = vi.fn(async () => new Response('{}', { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
     await submitQuote(FORM);
-    const [url] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(url).toBe('/api/submit-quote');
+    const url = fetchMock.mock.calls[0][0];
+    expect(url).toBe('https://cleaning-by-kandi.vercel.app/api/submit-quote');
   });
 
   it('uses the configured VITE_QUOTE_API_URL when set', async () => {
