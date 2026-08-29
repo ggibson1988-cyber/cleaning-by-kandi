@@ -10,6 +10,8 @@ import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 import SparkleAccent from '../components/SparkleAccent';
+import Seo from '../components/Seo';
+import ResponsiveImage from '../components/ResponsiveImage';
 
 /* ─── Data ───────────────────────────────────────────────── */
 const services = [
@@ -48,15 +50,15 @@ function HeroPhoto() {
     <div className="relative hidden lg:block">
       <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
       <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
-        <img
-          src="images/hero.jpg"
+        <ResponsiveImage
+          base="/images/hero"
           alt="Beautifully maintained West Valley Arizona living room — the result of a Cleaning By Kandi visit"
           className="w-full h-full object-cover"
+          widths={[400, 800, 1200]}
           width={800}
           height={1000}
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" aria-hidden="true" />
         <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg flex items-center gap-3">
@@ -75,6 +77,7 @@ function HeroPhoto() {
 export default function Home() {
   return (
     <>
+      <Seo path="/" />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900">
         <BubblePattern opacity={0.07} />
@@ -84,11 +87,12 @@ export default function Home() {
               {/* Mobile-only: circular hero photo medallion */}
               <div className="block lg:hidden mb-6">
                 <img
-                  src="images/hero.jpg"
+                  src="/images/hero-400.webp"
                   alt="Warm, clean Arizona living room — the Cleaning By Kandi result"
                   className="w-20 h-20 rounded-full object-cover ring-4 ring-sky-400/30 shadow-lg"
                   width={80}
                   height={80}
+                  loading="lazy"
                 />
               </div>
 
@@ -201,7 +205,7 @@ export default function Home() {
                     to="/services"
                     className="inline-flex items-center gap-1 text-brand-primary text-sm font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
                   >
-                    Learn more <ArrowRight className="w-4 h-4" />
+                    Learn more <span className="sr-only">about {title}</span> <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </StaggerItem>
@@ -263,14 +267,14 @@ export default function Home() {
               <div className="relative">
                 <div className="absolute -top-3 -left-3 w-full h-full rounded-3xl border-2 border-emerald-400/40" aria-hidden="true" />
                 <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
-                  <img
-                    src="images/clean-home.jpg"
+                  <ResponsiveImage
+                    base="/images/clean-home"
                     alt="Bright, freshly cleaned Arizona living room interior"
                     className="w-full h-full object-cover"
+                    widths={[400, 800, 1200]}
                     width={800}
                     height={600}
-                    loading="lazy"
-                    decoding="async"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                   />
                 </div>
               </div>
@@ -346,7 +350,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/request-quote"
-              className="inline-flex items-center justify-center gap-2 bg-brand-primary-light hover:bg-sky-400 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
+              className="inline-flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-dark text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer text-base min-h-[44px]"
             >
               Request a Free Quote <ArrowRight className="w-4 h-4" />
             </Link>

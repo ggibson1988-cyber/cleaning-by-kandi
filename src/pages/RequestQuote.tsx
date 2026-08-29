@@ -1,16 +1,18 @@
 import { useState, type FormEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Home, Layers, Key, Building2, MoveRight,
   CheckCircle, ArrowRight, ArrowLeft, Phone, Mail,
   User, MapPin, Calendar, MessageSquare, Sparkles,
 } from 'lucide-react';
+import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
+import { TRANSACTIONAL_CONSENT_TEXT, MARKETING_CONSENT_TEXT } from '../lib/consent';
+import { submitQuote } from '../lib/ghlAdapter';
 
-declare global {
-  interface Window {
-    CBK_GHL_WEBHOOK_URL?: string;
-  }
-}
+const QUOTE_SEO = <Seo path="/request-quote" />;
+const QUOTE_BREADCRUMBS = <Breadcrumbs items={[{ label: 'Request a Quote', path: '/request-quote' }]} />;
 
 type ServiceType = 'residential' | 'deep' | 'moveinout' | 'rental' | 'commercial' | '';
 
@@ -19,12 +21,14 @@ interface FormData {
   bedrooms: string; bathrooms: string; sqft: string; frequency: string;
   firstName: string; lastName: string; email: string; phone: string;
   city: string; address: string; preferredDate: string; notes: string;
+  smsTransactionalConsent: boolean; smsMarketingConsent: boolean;
 }
 
 const INIT: FormData = {
   serviceType: '', bedrooms: '', bathrooms: '', sqft: '', frequency: '',
   firstName: '', lastName: '', email: '', phone: '',
   city: '', address: '', preferredDate: '', notes: '',
+  smsTransactionalConsent: false, smsMarketingConsent: false,
 };
 
 const SERVICES = [
@@ -47,7 +51,6 @@ const SLIDE = {
   exit:  (dir: number) => ({ x: dir > 0 ? -40 : 40, opacity: 0, transition: { duration: 0.18 } }),
 };
 
-/* ── Sub-components ── */
 function StepIndicator({ current, total }: { current: number; total: number }) {
   return (
     <div className="flex items-center justify-center gap-2 mb-8" aria-label={`Step ${current} of ${total}`}>
@@ -83,7 +86,6 @@ function FieldLabel({ htmlFor, children, required }: { htmlFor: string; children
 const inputCls = "w-full border border-slate-300 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200";
 const iconInputCls = `${inputCls} pl-10`;
 
-/* ── Main component ── */
 export default function RequestQuote() {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
@@ -93,6 +95,9 @@ export default function RequestQuote() {
   const [form, setForm] = useState<FormData>(INIT);
 
   const set = (key: keyof FormData) => (value: string) =>
+    setForm((f) => ({ ...f, [key]: value }));
+
+  const setBool = (key: 'smsTransactionalConsent' | 'smsMarketingConsent') => (value: boolean) =>
     setForm((f) => ({ ...f, [key]: value }));
 
   const canNext1 = form.serviceType !== '';
@@ -106,61 +111,22 @@ export default function RequestQuote() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const endpoint: string | undefined =
-      window.CBK_GHL_WEBHOOK_URL ||
-      import.meta.env.VITE_GHL_WEBHOOK_URL ||
-      import.meta.env.VITE_FORMSPREE_ENDPOINT;
-    if (!endpoint) {
-      setSubmitError('The GoHighLevel quote form is not configured yet. Please call us at (480) 309-7607.');
-      return;
-    }
+    if (submitting) return; // duplicate-submit guard in addition to the disabled button
     setSubmitting(true);
     setSubmitError('');
-    try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          source: 'Cleaning By Kandi Website',
-          form_name: 'Cleaning By Kandi Quote Request',
-          subject: `Quote Request — ${form.firstName} ${form.lastName}`,
-          serviceType: form.serviceType,
-          bedrooms: form.bedrooms,
-          bathrooms: form.bathrooms,
-          squareFootage: form.sqft || 'Not provided',
-          frequency: form.frequency,
-          firstName: form.firstName,
-          lastName: form.lastName,
-          name: `${form.firstName} ${form.lastName}`,
-          email: form.email,
-          phone: form.phone,
-          city: form.city,
-          address: form.address || 'Not provided',
-          preferredDate: form.preferredDate || 'Flexible',
-          notes: form.notes || 'None',
-          pageUrl: window.location.href,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error ?? 'Submission failed. Please try again.');
-      }
+    const result = await submitQuote(form);
+    if (result.ok) {
       setSubmitted(true);
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error
-          ? err.message
-          : 'Something went wrong. Please try again or call us at (480) 309-7607.',
-      );
-    } finally {
-      setSubmitting(false);
+    } else {
+      setSubmitError(result.error);
     }
+    setSubmitting(false);
   };
 
-  /* ── Success state ── */
   if (submitted) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4 py-20">
+        {QUOTE_SEO}
         <div className="max-w-md w-full text-center">
           <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Sparkles className="w-10 h-10 text-brand-success" />
@@ -187,6 +153,8 @@ export default function RequestQuote() {
 
   return (
     <>
+      {QUOTE_SEO}
+      {QUOTE_BREADCRUMBS}
       {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 to-sky-900 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -205,16 +173,9 @@ export default function RequestQuote() {
 
             <form onSubmit={handleSubmit} noValidate>
               <AnimatePresence mode="wait" custom={direction} initial={false}>
-                {/* ── Step 1: Service ── */}
+                {/* Step 1: Service */}
                 {step === 1 && (
-                  <motion.div
-                    key="step1"
-                    custom={direction}
-                    variants={SLIDE}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                  >
+                  <motion.div key="step1" custom={direction} variants={SLIDE} initial="enter" animate="center" exit="exit">
                     <h2 className="text-xl font-bold text-slate-900 mb-1">Select Your Service</h2>
                     <p className="text-slate-500 text-sm mb-6">Choose the type of cleaning you need.</p>
                     <div className="grid grid-cols-1 gap-3">
@@ -244,16 +205,9 @@ export default function RequestQuote() {
                   </motion.div>
                 )}
 
-                {/* ── Step 2: Home details ── */}
+                {/* Step 2: Home details */}
                 {step === 2 && (
-                  <motion.div
-                    key="step2"
-                    custom={direction}
-                    variants={SLIDE}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                  >
+                  <motion.div key="step2" custom={direction} variants={SLIDE} initial="enter" animate="center" exit="exit">
                     <h2 className="text-xl font-bold text-slate-900 mb-1">Tell Us About Your Space</h2>
                     <p className="text-slate-500 text-sm mb-6">This helps us give you an accurate estimate.</p>
                     <div className="space-y-5">
@@ -301,20 +255,12 @@ export default function RequestQuote() {
                   </motion.div>
                 )}
 
-                {/* ── Step 3: Contact ── */}
+                {/* Step 3: Contact */}
                 {step === 3 && (
-                  <motion.div
-                    key="step3"
-                    custom={direction}
-                    variants={SLIDE}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                  >
+                  <motion.div key="step3" custom={direction} variants={SLIDE} initial="enter" animate="center" exit="exit">
                     <h2 className="text-xl font-bold text-slate-900 mb-1">Your Contact Information</h2>
                     <p className="text-slate-500 text-sm mb-6">We'll use this to send your quote and follow up.</p>
                     <div className="space-y-4">
-                      {/* Name row — collapses to 1-col on narrow screens */}
                       <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-4">
                         <div>
                           <FieldLabel htmlFor="firstName" required>First Name</FieldLabel>
@@ -342,6 +288,35 @@ export default function RequestQuote() {
                           <input id="phone" type="tel" value={form.phone} onChange={(e) => set('phone')(e.target.value)} required autoComplete="tel" placeholder="(480) 555-0123" className={iconInputCls} />
                         </div>
                       </div>
+
+                      {/* SMS consent sits directly under the phone field so the checkboxes are
+                          unambiguously tied to the number entered above, not the form at large. */}
+                      <div className="flex flex-col gap-3">
+                        <label className="flex items-start gap-2.5 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={form.smsTransactionalConsent}
+                            onChange={(e) => setBool('smsTransactionalConsent')(e.target.checked)}
+                            className="mt-0.5 w-4 h-4 shrink-0 accent-brand-primary cursor-pointer"
+                          />
+                          <span className="text-slate-500 text-xs leading-relaxed">{TRANSACTIONAL_CONSENT_TEXT}</span>
+                        </label>
+                        <label className="flex items-start gap-2.5 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={form.smsMarketingConsent}
+                            onChange={(e) => setBool('smsMarketingConsent')(e.target.checked)}
+                            className="mt-0.5 w-4 h-4 shrink-0 accent-brand-primary cursor-pointer"
+                          />
+                          <span className="text-slate-500 text-xs leading-relaxed">{MARKETING_CONSENT_TEXT}</span>
+                        </label>
+                        <p className="text-slate-400 text-[11px] leading-relaxed">
+                          Checking these boxes is optional and not required to request a quote. See our{' '}
+                          <Link to="/privacy" className="text-slate-500 hover:underline cursor-pointer">Privacy Policy</Link> and{' '}
+                          <Link to="/terms" className="text-slate-500 hover:underline cursor-pointer">Terms of Service</Link>.
+                        </p>
+                      </div>
+
                       <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-4">
                         <div>
                           <FieldLabel htmlFor="city" required>City</FieldLabel>
@@ -383,7 +358,6 @@ export default function RequestQuote() {
                 </p>
               )}
 
-              {/* Navigation */}
               <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-100">
                 {step > 1 ? (
                   <button type="button" onClick={() => goTo(step - 1)} className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-medium text-sm transition-colors duration-200 cursor-pointer">
@@ -413,7 +387,6 @@ export default function RequestQuote() {
             </form>
           </div>
 
-          {/* Trust note */}
           <div className="mt-6 bg-white rounded-2xl border border-slate-200 p-5 flex gap-4 items-start">
             <CheckCircle className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
             <div>

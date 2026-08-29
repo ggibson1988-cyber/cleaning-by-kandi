@@ -12,6 +12,8 @@ const navLinks = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
 
   /* Close on Escape; return focus to toggle */
   useEffect(() => {
@@ -29,6 +31,32 @@ export default function Header() {
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  /* Move focus into the panel when it opens */
+  useEffect(() => {
+    if (open) firstLinkRef.current?.focus();
+  }, [open]);
+
+  /* Trap Tab within the panel while open */
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || !menuRef.current) return;
+      const focusable = menuRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
   }, [open]);
 
   const close = () => {
@@ -107,15 +135,17 @@ export default function Header() {
       {open && (
         <div
           id="mobile-menu"
+          ref={menuRef}
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
           className="md:hidden border-t border-slate-200 bg-white px-4 pb-4 pt-2"
         >
           <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
-            {navLinks.map(({ to, label }) => (
+            {navLinks.map(({ to, label }, index) => (
               <NavLink
                 key={to}
+                ref={index === 0 ? firstLinkRef : undefined}
                 to={to}
                 end={to === '/'}
                 onClick={close}

@@ -4,13 +4,22 @@ import FadeIn from '../components/FadeIn';
 import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
+import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
+import ResponsiveImage from '../components/ResponsiveImage';
 
+// Kept in sync with SERVICE_AREAS in src/lib/business.ts (footer + JSON-LD
+// areaServed) — see docs/ARCHITECTURE.md "Open questions for the owner" #5
+// for the history of this list previously drifting out of sync. Sun City
+// and Buckeye have no verified zip list yet, so their zip arrays are left
+// empty rather than guessed.
 const cities = [
   { name: 'Peoria',   description: 'Our home base! Proudly serving Lake Pleasant, Vistancia, and all Peoria neighborhoods.',           zip: ['85345', '85380', '85381', '85382', '85383'], highlight: true  },
   { name: 'Surprise', description: 'We serve all Surprise neighborhoods — from Marley Park to Asante.',                                zip: ['85374', '85378', '85379', '85388'], highlight: false },
   { name: 'Glendale', description: 'Serving homes and businesses throughout Glendale, including Westgate and Arrowhead.',              zip: ['85301', '85302', '85303', '85304', '85305', '85306'], highlight: false },
+  { name: 'Sun City', description: 'Serving Sun City and the surrounding West Valley retirement communities.',                         zip: [], highlight: false },
   { name: 'Goodyear', description: 'Covering Palm Valley, Estrella Mountain Ranch, and Goodyear neighborhoods.',                      zip: ['85338', '85395'], highlight: false },
-  { name: 'Phoenix',  description: 'Serving homes and businesses across central and west Phoenix.',                                   zip: ['85009', '85013', '85015', '85017', '85019', '85031', '85033', '85035'], highlight: false },
+  { name: 'Buckeye',  description: 'Reaching homes and businesses out to Buckeye on the western edge of the Valley.',                  zip: [], highlight: false },
   { name: 'And More', description: 'Don\'t see your city? We may still be able to help — give us a call!',                           zip: [], highlight: false },
 ];
 
@@ -19,8 +28,14 @@ const ArizonaMap = () => {
     { x: 227, y: 173, name: 'Surprise', primary: false, lx: 240, ly: 158, anchor: 'start' as const },
     { x: 319, y: 201, name: 'Peoria',   primary: true,  lx: 332, ly: 184, anchor: 'start' as const },
     { x: 354, y: 225, name: 'Glendale', primary: false, lx: 367, ly: 210, anchor: 'start' as const },
+    // Placed along the Loop 101 corridor labeled below ("N/S through Sun
+    // City & Peoria"), north of the Peoria pin — decorative/approximate,
+    // like the rest of this map, not a verified coordinate.
+    { x: 275, y: 125, name: 'Sun City', primary: false, lx: 262, ly: 110, anchor: 'end'   as const },
     { x: 234, y: 284, name: 'Goodyear', primary: false, lx: 247, ly: 269, anchor: 'start' as const },
-    { x: 433, y: 276, name: 'Phoenix',  primary: false, lx: 415, ly: 261, anchor: 'end'   as const },
+    // Placed along the I-10 corridor labeled below ("E/W through Goodyear
+    // & Buckeye"), west of the Goodyear pin — decorative/approximate.
+    { x: 105, y: 275, name: 'Buckeye',  primary: false, lx: 92,  ly: 260, anchor: 'start' as const },
   ];
 
   return (
@@ -188,6 +203,8 @@ const ArizonaMap = () => {
 export default function ServiceAreas() {
   return (
     <>
+      <Seo path="/service-areas" />
+      <Breadcrumbs items={[{ label: 'Service Areas', path: '/service-areas' }]} />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />
@@ -274,14 +291,14 @@ export default function ServiceAreas() {
 
       {/* ── Arizona photo band ── */}
       <section className="relative overflow-hidden h-48 md:h-64">
-        <img
-          src="images/arizona.jpg"
+        <ResponsiveImage
+          base="/images/arizona"
           alt="Sonoran Desert landscape in the West Valley Arizona region — the communities Cleaning By Kandi serves"
           className="absolute inset-0 w-full h-full object-cover"
+          widths={[400, 800, 1200]}
           width={1200}
           height={600}
-          loading="lazy"
-          decoding="async"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/75 to-sky-900/50 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

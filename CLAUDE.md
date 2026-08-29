@@ -1,3 +1,24 @@
+> **Superseded 2026-08-16, corrected 2026-08-17.** The instructions below
+> described rebuilding this site natively inside GoHighLevel's page builder.
+> That direction was replaced by a `feature/seo-foundation-cloudflare` branch
+> that added clean routes, prerendered HTML, and metadata/schema/sitemap
+> work for this React/Vite app. **An earlier revision of that branch and its
+> docs assumed Cloudflare Workers/Pages as the hosting target — that was a
+> mistake and has been removed; Cloudflare hosting was never approved.**
+> The actual current production architecture is: `cleaningbykandi.com` is
+> served through GoHighLevel; the custom React frontend/build assets are
+> created and deployed through Vercel; GoHighLevel remains the CRM/workflow
+> backend and the current live public host. **How GHL will serve this
+> frontend's clean routes (`/about`, `/services`, etc.) while preserving the
+> Vercel-built assets is not yet designed** — see `docs/ARCHITECTURE.md`'s
+> "Unresolved deployment requirement" section; do not assume it's solved.
+> The business facts and service list below are still accurate and still
+> the source of truth; the "Rebuild natively in GHL" instructions and
+> GHL-build-sheet output format are historical — kept for reference, not to
+> be followed for new work.
+
+---
+
 # Claude Instructions — Cleaning By Kandi
 
 This repo contains a React/Vite website for Cleaning By Kandi, LLC.
@@ -23,8 +44,6 @@ Services:
 - Move-In / Move-Out Cleaning
 - Short-Term Rental / Airbnb Cleaning
 - Commercial Cleaning
-- Organization Services
-- Eco-Friendly Cleaning
 
 ## Instructions
 

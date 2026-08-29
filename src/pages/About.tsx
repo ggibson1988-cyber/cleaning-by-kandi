@@ -8,6 +8,9 @@ import { StaggerGrid, StaggerItem } from '../components/StaggerGrid';
 import WaveDivider from '../components/WaveDivider';
 import BubblePattern from '../components/BubblePattern';
 import SparkleAccent from '../components/SparkleAccent';
+import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
+import ResponsiveImage from '../components/ResponsiveImage';
 
 const values = [
   { icon: Shield, title: 'Reliability',         description: 'When you book with Cleaning By Kandi, you can count on us to show up on time, every time. Your schedule is precious — we treat it that way.' },
@@ -25,6 +28,8 @@ const milestones = [
 export default function About() {
   return (
     <>
+      <Seo path="/about" />
+      <Breadcrumbs items={[{ label: 'About', path: '/about' }]} />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-sky-900 py-16 md:py-24">
         <BubblePattern opacity={0.06} />
@@ -75,14 +80,14 @@ export default function About() {
               <div className="relative">
                 <div className="absolute -top-4 -right-4 w-full h-full rounded-3xl border-2 border-sky-400/40" aria-hidden="true" />
                 <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3]">
-                  <img
-                    src="images/about-team.jpg"
+                  <ResponsiveImage
+                    base="/images/about-team"
                     alt="Kandi and her professional cleaning team ready for a West Valley home cleaning"
                     className="w-full h-full object-cover"
+                    widths={[400, 800, 1200]}
                     width={800}
                     height={600}
-                    loading="lazy"
-                    decoding="async"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent" aria-hidden="true" />
                 </div>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Cleaning By Kandi icon">
+  <g transform="translate(0,0)">
+    <rect width="512" height="512" rx="112.64" fill="#0284C7"/>
+    <path d="M256.0 81.92 C256.0 81.92, 107.52000000000001 225.28, 107.52000000000001 337.92 C107.52000000000001 477.4912, 116.42880000000002 486.4, 256.0 486.4 C395.5712 486.4, 404.48 477.4912, 404.48 337.92 C404.48 225.28, 256.0 81.92, 256.0 81.92 Z" fill="white"/>
+    <circle cx="256.0" cy="222.72" r="38.4" fill="#0284C7"/>
+    <path d="M217.6 304.64 L248.32 335.36 L304.64 279.04" stroke="#0284C7" stroke-width="19.456" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>
